@@ -23,12 +23,13 @@ import win32service
 
 mongo_dir = os.path.join(os.getcwd(), 'db')
 mongo_exe = os.path.join(mongo_dir, 'mongod.exe')
-mongo_data = os.path.join(mongo_dir, 'data')
-mongo_log = os.path.join(mongo_dir, 'log', 'db.log')
+mongo_data_dir = os.path.join(mongo_dir, 'data')
+mongo_log_dir = os.path.join(mongo_dir, 'log')
+mongo_log_file = os.path.join(mongo_log_dir, 'db.log')
 
 serviceName = 'regbooksvc'
 displayName = 'MongoDB Service For RegBook'
-binaryPathName = f'"{mongo_exe}" --auth --bind_ip_all --dbpath "{mongo_data}" --logpath "{mongo_log}" --service'
+binaryPathName = f'"{mongo_exe}" --auth --bind_ip_all --dbpath "{mongo_data_dir}" --logpath "{mongo_log_file}" --service'
 
 firewallName = 'MongoDB Service For RegBook'
 
@@ -44,6 +45,16 @@ class SvcStatus(Enum):
 
 
 class SvcEntity(object):
+    @classmethod
+    def GetSvcEntity(cls):
+        if not os.path.isfile(mongo_exe):
+            raise RuntimeError(f'File not exist: {mongo_exe}')
+        if not os.path.isdir(mongo_data_dir):
+            raise RuntimeError(f'Directory not exist: {mongo_data_dir}')
+        if not os.path.isdir(mongo_log_dir):
+            raise RuntimeError(f'Directory not exist: {mongo_log_dir}')
+        return cls()
+
     def __init__(self):
         self.scmHandle = None
         self.scmHandle = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
@@ -191,6 +202,12 @@ class SvcEntity(object):
                 None,
                 "NT AUTHORITY\\NetworkService",
                 None)
+            win32service.CloseServiceHandle(svcHandle)
+            # must reopen service or get error
+            svcHandle = win32service.OpenService(
+                self.scmHandle,
+                serviceName,
+                win32service.SERVICE_ALL_ACCESS)
 
             status_code = self._start(svcHandle)
             if status_code != win32service.SERVICE_RUNNING:
@@ -219,6 +236,3 @@ class SvcEntity(object):
             if svcHandle:
                 win32service.CloseServiceHandle(svcHandle)
 
-
-if __name__ == '__main__':
-    print(binaryPathName)

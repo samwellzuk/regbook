@@ -13,34 +13,30 @@
   <property name="windowTitle">
    <string>RegBook Server</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resouce.qrc">
+    <normaloff>:/images/badge.svg</normaloff>:/images/badge.svg</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>IP address:</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_ip">
-       <property name="text">
-        <string/>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
        </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Status:</string>
+        <string>&lt;span style=&quot;font-size:32pt;font-weight: bold;color:black;&quot;&gt;IP&amp;nbsp;&amp;nbsp;:&lt;/span&gt;&lt;span style=&quot;font-size:32pt;font-weight: bold;color:green;&quot;&gt;localhost&lt;/span&gt;</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="label_status">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
        <property name="text">
-        <string/>
+        <string>&lt;span style=&quot;font-size:32pt;font-weight: bold;color:black;&quot;&gt;STATUS:&lt;/span&gt;&lt;span style=&quot;font-size:32pt;font-weight: bold;color:grey;&quot;&gt;Not Exist&lt;/span&gt;</string>
        </property>
       </widget>
      </item>
@@ -130,6 +126,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resouce.qrc"/>
+ </resources>
  <connections/>
 </ui>
