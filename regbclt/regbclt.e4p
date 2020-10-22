@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project SYSTEM "Project-5.1.dtd">
+<!-- eric project file for project regbclt -->
+<!-- Saved: 2020-10-23, 00:38:40 -->
+<!-- Copyright (C) 2020 ,  -->
+<Project version="5.1">
+  <Language>en_US</Language>
+  <Hash>e92b0e73013ce38d754a47eec0a01709d61113f8</Hash>
+  <ProgLanguage mixed="0">Python3</ProgLanguage>
+  <ProjectType>PyQt5</ProjectType>
+  <Version>0.1</Version>
+  <Author></Author>
+  <Email></Email>
+  <Eol index="0"/>
+  <Sources>
+    <Source>__init__.py</Source>
+    <Source>app.pyw</Source>
+    <Source>model.py</Source>
+    <Source>settings.py</Source>
+    <Source>ui/Ui_ChangePwdDlg.py</Source>
+    <Source>ui/Ui_LoginDlg.py</Source>
+    <Source>ui/Ui_MainWnd.py</Source>
+    <Source>ui/Ui_RegisterDlg.py</Source>
+    <Source>ui/Ui_ResetPwdDlg.py</Source>
+    <Source>ui/Ui_UserManageView.py</Source>
+    <Source>view/ChangePwdDlg.py</Source>
+    <Source>view/LoginDlg.py</Source>
+    <Source>view/MainWnd.py</Source>
+    <Source>view/MemberManageView.py</Source>
+    <Source>view/RegisterDlg.py</Source>
+    <Source>view/ResetPwdDlg.py</Source>
+    <Source>view/UserManageView.py</Source>
+    <Source>view/__init__.py</Source>
+    <Source>view/asynctask.py</Source>
+    <Source>view/utility.py</Source>
+  </Sources>
+  <Forms>
+    <Form>ui/MemberManageView.ui</Form>
+    <Form>ui/ChangePwdDlg.ui</Form>
+    <Form>ui/LoginDlg.ui</Form>
+    <Form>ui/MainWnd.ui</Form>
+    <Form>ui/RegisterDlg.ui</Form>
+    <Form>ui/ResetPwdDlg.ui</Form>
+    <Form>ui/UserManageView.ui</Form>
+  </Forms>
+  <Resources>
+    <Resource>resouce.qrc</Resource>
+  </Resources>
+  <Others>
+    <Other>requirements.txt</Other>
+  </Others>
+  <MainScript>app.pyw</MainScript>
+  <Vcs>
+    <VcsType>None</VcsType>
+  </Vcs>
+  <FiletypeAssociations>
+    <FiletypeAssociation pattern="*.e4p" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
+    <FiletypeAssociation pattern="*.md" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.proto" type="PROTOCOLS"/>
+    <FiletypeAssociation pattern="*.py" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.py3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.qm" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.qrc" type="RESOURCES"/>
+    <FiletypeAssociation pattern="*.rst" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.ts" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.txt" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.ui" type="FORMS"/>
+    <FiletypeAssociation pattern="GNUmakefile" type="OTHERS"/>
+    <FiletypeAssociation pattern="Makefile" type="OTHERS"/>
+    <FiletypeAssociation pattern="README" type="OTHERS"/>
+    <FiletypeAssociation pattern="README.*" type="OTHERS"/>
+    <FiletypeAssociation pattern="makefile" type="OTHERS"/>
+  </FiletypeAssociations>
+</Project>
