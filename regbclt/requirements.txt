@@ -1,4 +1,2 @@
-pyyaml
 PyQt5
 PyQtWebEngine
-appdirs

@@ -21,7 +21,10 @@ import win32service
 #     sys.executable               D:\ChruchProjects\regbook\venv\Scripts\python.exe
 #     os.getcwd()                  D:\ChruchProjects\regbook\regbsvr
 
-mongo_dir = os.path.join(os.getcwd(), 'db')
+mongo_dir = os.path.normpath(os.path.join(os.getcwd(), 'db'))
+if not os.path.isdir(mongo_dir):
+    mongo_dir = os.path.normpath(os.path.join(os.getcwd(), '..', 'db'))
+
 mongo_exe = os.path.join(mongo_dir, 'mongod.exe')
 mongo_data_dir = os.path.join(mongo_dir, 'data')
 mongo_log_dir = os.path.join(mongo_dir, 'log')
@@ -235,4 +238,3 @@ class SvcEntity(object):
         finally:
             if svcHandle:
                 win32service.CloseServiceHandle(svcHandle)
-
