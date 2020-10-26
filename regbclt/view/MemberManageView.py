@@ -7,7 +7,7 @@ Module implementing MemberManageView.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget
 
-from ui.Ui_MemberManageView import Ui_MemberManageView
+from .ui_MemberManageView import Ui_MemberManageView
 
 
 class MemberManageView(QWidget, Ui_MemberManageView):

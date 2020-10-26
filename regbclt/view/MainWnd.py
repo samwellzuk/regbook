@@ -7,7 +7,7 @@ Module implementing MainWindow.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow
 
-from ui.Ui_MainWnd import Ui_MainWindow
+from .ui_MainWnd import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):

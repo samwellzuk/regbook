@@ -7,7 +7,7 @@ Module implementing UserManageView.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget
 
-from ui.Ui_UserManageView import Ui_UserManageView
+from .ui_UserManageView import Ui_UserManageView
 
 
 class UserManageView(QWidget, Ui_UserManageView):

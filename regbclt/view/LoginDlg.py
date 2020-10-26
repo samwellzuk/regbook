@@ -7,7 +7,7 @@ Module implementing LoginDlg.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
-from ui.Ui_LoginDlg import Ui_LoginDlg
+from .ui_LoginDlg import Ui_LoginDlg
 
 
 class LoginDlg(QDialog, Ui_LoginDlg):

@@ -17,33 +17,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="finnameLabel">
-       <property name="text">
-        <string>Search(&amp;S)</string>
-       </property>
-       <property name="buddy">
-        <cstring>searchname</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="searchname"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="findButton">
-       <property name="text">
-        <string>Find(&amp;F)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="refreshButton">
-       <property name="text">
-        <string>Refresh(&amp;U)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

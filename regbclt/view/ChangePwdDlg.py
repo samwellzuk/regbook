@@ -7,7 +7,7 @@ Module implementing ChangePwdDlg.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
-from ui.Ui_ChangePwdDlg import Ui_ChangePwdDlg
+from .ui_ChangePwdDlg import Ui_ChangePwdDlg
 
 
 class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):

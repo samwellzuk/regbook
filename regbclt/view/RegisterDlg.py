@@ -7,7 +7,7 @@ Module implementing RegisterDlg.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
-from ui.Ui_RegisterDlg import Ui_RegisterDlg
+from .ui_RegisterDlg import Ui_RegisterDlg
 
 
 class RegisterDlg(QDialog, Ui_RegisterDlg):

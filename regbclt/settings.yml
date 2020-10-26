@@ -1,0 +1,14 @@
+nation:
+  - Filipino
+  - Chinese
+sex:
+  - Famale
+  - Male
+education:
+  - Elementary
+  - High School
+  - College
+occupation:
+  - Student
+  - Businessman
+  - Employee

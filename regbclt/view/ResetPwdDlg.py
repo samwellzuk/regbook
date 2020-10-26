@@ -7,7 +7,7 @@ Module implementing RestPwdDlg.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
-from ui.Ui_ResetPwdDlg import Ui_RestPwdDlg
+from .ui_ResetPwdDlg import Ui_RestPwdDlg
 
 
 class RestPwdDlg(QDialog, Ui_RestPwdDlg):
