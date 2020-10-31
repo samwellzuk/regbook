@@ -14,11 +14,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_UserManageView(object):
     def setupUi(self, UserManageView):
         UserManageView.setObjectName("UserManageView")
-        UserManageView.resize(913, 421)
+        UserManageView.resize(974, 317)
         self.verticalLayout = QtWidgets.QVBoxLayout(UserManageView)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.finnameLabel = QtWidgets.QLabel(UserManageView)
+        self.finnameLabel.setObjectName("finnameLabel")
+        self.horizontalLayout_2.addWidget(self.finnameLabel)
+        self.findnameEdit = QtWidgets.QLineEdit(UserManageView)
+        self.findnameEdit.setObjectName("findnameEdit")
+        self.horizontalLayout_2.addWidget(self.findnameEdit)
+        self.findButton = QtWidgets.QPushButton(UserManageView)
+        self.findButton.setObjectName("findButton")
+        self.horizontalLayout_2.addWidget(self.findButton)
+        self.refreshButton = QtWidgets.QPushButton(UserManageView)
+        self.refreshButton.setObjectName("refreshButton")
+        self.horizontalLayout_2.addWidget(self.refreshButton)
         self.line = QtWidgets.QFrame(UserManageView)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -42,6 +54,7 @@ class Ui_UserManageView(object):
         self.usersView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.usersView.setObjectName("usersView")
         self.verticalLayout.addWidget(self.usersView)
+        self.finnameLabel.setBuddy(self.findnameEdit)
 
         self.retranslateUi(UserManageView)
         QtCore.QMetaObject.connectSlotsByName(UserManageView)
@@ -49,6 +62,9 @@ class Ui_UserManageView(object):
     def retranslateUi(self, UserManageView):
         _translate = QtCore.QCoreApplication.translate
         UserManageView.setWindowTitle(_translate("UserManageView", "User Manage"))
+        self.finnameLabel.setText(_translate("UserManageView", "User(&X)"))
+        self.findButton.setText(_translate("UserManageView", "Find(&F)"))
+        self.refreshButton.setText(_translate("UserManageView", "Refresh(&U)"))
         self.addButton.setText(_translate("UserManageView", "Add(&A)"))
         self.delButton.setText(_translate("UserManageView", "Delete(&D)"))
         self.resetButton.setText(_translate("UserManageView", "Reset Password(&R)"))

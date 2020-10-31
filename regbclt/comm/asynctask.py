@@ -1,3 +1,5 @@
+# -*-coding: utf-8 -*-
+# Created by samwell
 import time
 import types
 import weakref
@@ -166,7 +168,7 @@ class AsyncTask(QObject):
     def check_thread():
         while AsyncTask._out_counter != 0:
             QApplication.processEvents()
-            time.sleep(0.1)
+            time.sleep(0.05)
         return
 
     def __init__(self, func, *args, **kwargs):
@@ -288,7 +290,7 @@ def coroutine(func=None, *, is_block=False):
         if is_block:
             while not genobj_finished:
                 QApplication.processEvents()
-                time.sleep(0.1)
+                time.sleep(0.05)
         return genrt
 
     return _wrapper

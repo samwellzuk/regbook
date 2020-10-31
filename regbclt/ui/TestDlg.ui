@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LoginDlg</class>
+ <widget class="QDialog" name="LoginDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>358</width>
+    <height>118</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Login</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resouce.qrc">
+    <normaloff>:/images/app.svg</normaloff>:/images/app.svg</iconset>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="okButton">
+   <property name="geometry">
+    <rect>
+     <x>129</x>
+     <y>48</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Login(&amp;O)</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>228</x>
+     <y>48</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Quit(&amp;Q)</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../resouce.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>okButton</sender>
+   <signal>clicked()</signal>
+   <receiver>LoginDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>LoginDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

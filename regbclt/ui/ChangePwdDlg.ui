@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>User Manage</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resouce.qrc">
+    <normaloff>:/images/app.svg</normaloff>:/images/app.svg</iconset>
+  </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>

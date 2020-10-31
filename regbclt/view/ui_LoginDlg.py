@@ -15,6 +15,9 @@ class Ui_LoginDlg(object):
     def setupUi(self, LoginDlg):
         LoginDlg.setObjectName("LoginDlg")
         LoginDlg.resize(400, 200)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/app.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        LoginDlg.setWindowIcon(icon)
         LoginDlg.setSizeGripEnabled(False)
         LoginDlg.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(LoginDlg)

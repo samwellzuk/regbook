@@ -7,6 +7,8 @@ Module implementing ChangePwdDlg.
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
+from comm.utility import except_check
+
 from .ui_ChangePwdDlg import Ui_ChangePwdDlg
 
 
@@ -14,7 +16,8 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
     """
     Class documentation goes here.
     """
-    def __init__(self, parent=None):
+
+    def __init__(self, username, parent=None):
         """
         Constructor
         
@@ -23,7 +26,21 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
         """
         super(ChangePwdDlg, self).__init__(parent)
         self.setupUi(self)
-    
+        self.username.setText(username)
+        self.soldpwd = None
+        self.spwd = None
+        self.sconfirm = None
+
+    @except_check
+    def state_change(self):
+        self.soldpwd = self.oldpwd.text()
+        self.spwd = self.newpwd.text()
+        self.sconfirm = self.confirmpwd.text()
+        if self.soldpwd and self.spwd and self.sconfirm and self.spwd == self.sconfirm:
+            self.okButton.setEnabled(True)
+        else:
+            self.okButton.setEnabled(False)
+
     @pyqtSlot(str)
     def on_oldpwd_textChanged(self, p0):
         """
@@ -32,9 +49,8 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
         @param p0 DESCRIPTION
         @type str
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        self.state_change()
+
     @pyqtSlot(str)
     def on_newpwd_textChanged(self, p0):
         """
@@ -43,9 +59,8 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
         @param p0 DESCRIPTION
         @type str
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        self.state_change()
+
     @pyqtSlot(str)
     def on_confirmpwd_textChanged(self, p0):
         """
@@ -54,5 +69,4 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
         @param p0 DESCRIPTION
         @type str
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        self.state_change()

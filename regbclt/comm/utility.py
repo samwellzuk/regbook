@@ -1,7 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-
+# -*-coding: utf-8 -*-
+# Created by samwell
 from functools import wraps
 
 from PyQt5.QtWidgets import QApplication, QMessageBox

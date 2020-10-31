@@ -8,7 +8,7 @@ import pymongo
 import pymongo.errors
 import pymongo.database
 
-from .singleton import Singleton
+from comm.singleton import Singleton
 from .model import User, admin_role, rw_role, change_self_role
 
 _root_user: str = 'regbookroot'
@@ -63,8 +63,6 @@ class DBManager(metaclass=Singleton):
                     [('$**', pymongo.TEXT), ],
                     name='_fulltext_index',
                 )
-        except pymongo.errors.ConnectionFailure as exc:
-            raise RuntimeError("Server not available")
         except pymongo.errors.OperationFailure as exc:
             if exc.code == 13:
                 return
@@ -84,9 +82,6 @@ class DBManager(metaclass=Singleton):
             # The ismaster command is cheap and does not require auth.
             db.command('ismaster')
             uinfo = db.command('usersInfo', user)
-        except pymongo.errors.ConnectionFailure as exc:
-            client.close()
-            raise RuntimeError("Server not available")
         except pymongo.errors.OperationFailure as exc:
             client.close()
             if exc.code == 18:

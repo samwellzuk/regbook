@@ -15,6 +15,9 @@ class Ui_RestPwdDlg(object):
     def setupUi(self, RestPwdDlg):
         RestPwdDlg.setObjectName("RestPwdDlg")
         RestPwdDlg.resize(400, 220)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/app.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        RestPwdDlg.setWindowIcon(icon)
         RestPwdDlg.setSizeGripEnabled(False)
         RestPwdDlg.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(RestPwdDlg)

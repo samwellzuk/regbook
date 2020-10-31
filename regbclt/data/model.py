@@ -32,11 +32,11 @@ class User:
 
 @dataclass
 class Member:
-    name: str
-    cname: str
-    sex: str
-    birthday: datetime
-    nation: str
+    name: Optional[str] = None
+    cname: Optional[str] = None
+    sex: Optional[str] = None
+    birthday: Optional[datetime] = None
+    nation: Optional[str] = None
     street: Optional[str] = None
     city: Optional[str] = None
     province: Optional[str] = None

@@ -23,3 +23,6 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         """
         super(MemberManageView, self).__init__(parent)
         self.setupUi(self)
+
+    def activeView(self):
+        pass

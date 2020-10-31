@@ -15,6 +15,9 @@ class Ui_RegisterDlg(object):
     def setupUi(self, RegisterDlg):
         RegisterDlg.setObjectName("RegisterDlg")
         RegisterDlg.resize(400, 250)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/app.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        RegisterDlg.setWindowIcon(icon)
         RegisterDlg.setSizeGripEnabled(False)
         RegisterDlg.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(RegisterDlg)

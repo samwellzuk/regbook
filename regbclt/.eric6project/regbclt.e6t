@@ -1,232 +1,178 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Tasks SYSTEM "Tasks-6.0.dtd">
 <!-- eric6 tasks file for project regbclt -->
-<!-- Saved: 2020-10-23, 00:38:40 -->
+<!-- Saved: 2020-10-27, 14:13:47 -->
 <Tasks version="6.0">
   <ProjectScanFilter></ProjectScanFilter>
-  <Task priority="1" completed="False" type="2" uid="{6ae932e3-d3f2-4972-99a0-f6694e10f4a8}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 22:38:19</Created>
-    <Resource>
-      <Filename>ui/Ui_MainWnd.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="2" uid="{76a2969b-9467-458c-b8b3-0a076e02d2a5}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 22:38:19</Created>
-    <Resource>
-      <Filename>ui/Ui_RegisterDlg.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="2" uid="{89d4664c-9ba3-4013-a383-f6a8566141a1}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 22:38:19</Created>
-    <Resource>
-      <Filename>ui/Ui_ResetPwdDlg.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="2" uid="{6efb03d0-3bbe-4aab-9a2a-c92d607ac7dd}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 22:38:19</Created>
-    <Resource>
-      <Filename>ui/Ui_UserManageView.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="2" uid="{4d6d2d90-29ce-4b3a-bd26-b3a5a4131642}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 23:36:28</Created>
-    <Resource>
-      <Filename>ui/Ui_LoginDlg.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="2" uid="{a3c3cdc6-7b85-48cd-bccd-d2275d5f0aa2}">
-    <Summary>WARNING: Any manual changes made to this file will be lost when pyuic5 is</Summary>
-    <Description></Description>
-    <Created>2020-10-22, 23:36:32</Created>
-    <Resource>
-      <Filename>ui/Ui_ChangePwdDlg.py</Filename>
-      <Linenumber>7</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{378e594a-be8f-4e02-b02e-9f8e4d35029b}">
+  <Task priority="1" completed="False" type="1" uid="{4729d3f3-bda8-4998-8617-df34f2dd5a11}">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2020-10-23, 00:38:09</Created>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/ChangePwdDlg.py</Filename>
+      <Linenumber>35</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{af15179a-c7fb-42a3-8cf6-80c44db09d9c}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/ChangePwdDlg.py</Filename>
+      <Linenumber>46</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{c6811652-39e3-445d-a6b6-1add3cc72e53}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/ChangePwdDlg.py</Filename>
+      <Linenumber>57</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{3949e6b1-1ec3-423e-afe2-eb81dffabcf9}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/LoginDlg.py</Filename>
+      <Linenumber>39</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{b72fbb04-2c88-4d8d-9308-fef7fe9af10e}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/LoginDlg.py</Filename>
+      <Linenumber>50</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{29f287d0-042b-461c-b537-7e03ace6c4a7}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/LoginDlg.py</Filename>
+      <Linenumber>61</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{c51e2857-b19d-468c-8a60-327b45735d5d}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/MainWnd.py</Filename>
+      <Linenumber>32</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{9f5e37ef-06c2-4a4a-accd-60c386a433c4}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/MainWnd.py</Filename>
+      <Linenumber>40</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{f87006af-5bab-4756-93e5-c66553422a78}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/MainWnd.py</Filename>
+      <Linenumber>48</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{ce922f4b-3a33-4830-96e1-b8dca6e5e4fd}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/RegisterDlg.py</Filename>
+      <Linenumber>35</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{5c5d828f-ea49-4284-96a3-4ba3c5f3601e}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/RegisterDlg.py</Filename>
+      <Linenumber>46</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{2c9adf49-28ec-459e-a7ea-80e9a5137294}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/RegisterDlg.py</Filename>
+      <Linenumber>57</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{1df870bd-14eb-4716-b8e1-ef149eafbb83}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/ResetPwdDlg.py</Filename>
+      <Linenumber>35</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{e75b7297-2c9d-4ccf-93e4-51d6d3347bd7}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
+    <Resource>
+      <Filename>view/ResetPwdDlg.py</Filename>
+      <Linenumber>46</Linenumber>
+    </Resource>
+  </Task>
+  <Task priority="1" completed="False" type="1" uid="{45bfc4d5-2800-49c6-bfe6-6a22619ea7ea}">
+    <Summary>TODO: not implemented yet</Summary>
+    <Description></Description>
+    <Created>2020-10-27, 14:11:03</Created>
     <Resource>
       <Filename>view/UserManageView.py</Filename>
       <Linenumber>32</Linenumber>
     </Resource>
   </Task>
-  <Task priority="1" completed="False" type="1" uid="{a493abe4-9e4c-431e-9c8b-f67a9ff0db75}">
+  <Task priority="1" completed="False" type="1" uid="{eb1500a4-fa78-4303-99c2-9c01ed3800d0}">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2020-10-23, 00:38:09</Created>
+    <Created>2020-10-27, 14:11:03</Created>
     <Resource>
       <Filename>view/UserManageView.py</Filename>
       <Linenumber>40</Linenumber>
     </Resource>
   </Task>
-  <Task priority="1" completed="False" type="1" uid="{191042df-5505-40e5-bdcc-ceafe70d4db6}">
+  <Task priority="1" completed="False" type="1" uid="{8fba56ea-421e-4ba9-974d-0167389ac537}">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2020-10-23, 00:38:09</Created>
+    <Created>2020-10-27, 14:11:03</Created>
     <Resource>
       <Filename>view/UserManageView.py</Filename>
       <Linenumber>48</Linenumber>
     </Resource>
   </Task>
-  <Task priority="1" completed="False" type="1" uid="{a82c275d-d32b-4bef-b578-81257931dcdf}">
+  <Task priority="1" completed="False" type="1" uid="{7400dd6f-7428-4776-8aef-5d0564b21936}">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2020-10-23, 00:38:09</Created>
+    <Created>2020-10-27, 14:11:03</Created>
     <Resource>
       <Filename>view/UserManageView.py</Filename>
       <Linenumber>56</Linenumber>
     </Resource>
   </Task>
-  <Task priority="1" completed="False" type="1" uid="{9ac1a651-124a-41b1-9efe-1ccc3d9d857c}">
+  <Task priority="1" completed="False" type="1" uid="{c8ff2671-4ea3-4472-93ed-103dde62df8b}">
     <Summary>TODO: not implemented yet</Summary>
     <Description></Description>
-    <Created>2020-10-23, 00:38:09</Created>
+    <Created>2020-10-27, 14:11:03</Created>
     <Resource>
       <Filename>view/UserManageView.py</Filename>
       <Linenumber>64</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{93e945e1-21f5-4708-b146-04cf0c8a59ea}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:10</Created>
-    <Resource>
-      <Filename>view/ResetPwdDlg.py</Filename>
-      <Linenumber>35</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{3e41750e-4fa6-44e3-b2df-727448cafcbc}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:10</Created>
-    <Resource>
-      <Filename>view/ResetPwdDlg.py</Filename>
-      <Linenumber>46</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{c0b7528a-87db-40bf-a8a9-9e336baffe1f}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:13</Created>
-    <Resource>
-      <Filename>view/RegisterDlg.py</Filename>
-      <Linenumber>35</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{6dffe800-0c11-45a2-a7eb-e0be96d9ffd9}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:13</Created>
-    <Resource>
-      <Filename>view/RegisterDlg.py</Filename>
-      <Linenumber>46</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{3690a137-585f-4368-8875-a0f141c3a11e}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:13</Created>
-    <Resource>
-      <Filename>view/RegisterDlg.py</Filename>
-      <Linenumber>57</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{4600ba20-1a85-4f87-8008-7ba94885a232}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:24</Created>
-    <Resource>
-      <Filename>view/LoginDlg.py</Filename>
-      <Linenumber>35</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{50c29395-6dec-4047-b96b-c85bcae9d527}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:24</Created>
-    <Resource>
-      <Filename>view/LoginDlg.py</Filename>
-      <Linenumber>46</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{de2cea4e-d2b3-4064-8c50-28fb1347802c}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:24</Created>
-    <Resource>
-      <Filename>view/LoginDlg.py</Filename>
-      <Linenumber>57</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{4291c1a3-fe51-43d4-be90-bfabb179f80f}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:26</Created>
-    <Resource>
-      <Filename>view/ChangePwdDlg.py</Filename>
-      <Linenumber>35</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{5d85b0d0-426d-4d75-859e-ab3cf03eca4b}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:26</Created>
-    <Resource>
-      <Filename>view/ChangePwdDlg.py</Filename>
-      <Linenumber>46</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{07c4469a-d4a9-4d4c-beae-16e680c163f0}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:26</Created>
-    <Resource>
-      <Filename>view/ChangePwdDlg.py</Filename>
-      <Linenumber>57</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{25fbf0f1-b6fc-4866-bd2d-bbab311b32a9}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:32</Created>
-    <Resource>
-      <Filename>view/MainWnd.py</Filename>
-      <Linenumber>32</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{11c36ba7-b2d9-415e-ad65-2a29add4f9bf}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:32</Created>
-    <Resource>
-      <Filename>view/MainWnd.py</Filename>
-      <Linenumber>40</Linenumber>
-    </Resource>
-  </Task>
-  <Task priority="1" completed="False" type="1" uid="{a4b5b931-81e8-4645-a690-6a65c04e3481}">
-    <Summary>TODO: not implemented yet</Summary>
-    <Description></Description>
-    <Created>2020-10-23, 00:38:32</Created>
-    <Resource>
-      <Filename>view/MainWnd.py</Filename>
-      <Linenumber>48</Linenumber>
     </Resource>
   </Task>
 </Tasks>

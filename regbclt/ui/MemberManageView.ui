@@ -6,12 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>967</width>
+    <width>1107</width>
     <height>457</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>录入结算</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -19,7 +16,7 @@
      <item>
       <widget class="QLabel" name="keywordLabel">
        <property name="text">
-        <string>关键字(&amp;K)</string>
+        <string>Key Words(&amp;K)</string>
        </property>
        <property name="buddy">
         <cstring>keywordEdit</cstring>
@@ -28,27 +25,30 @@
      </item>
      <item>
       <widget class="QLineEdit" name="keywordEdit">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tom Male 12345 &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;==&lt;/span&gt; tom &lt;span style=&quot; color:#00aa00;&quot;&gt;OR&lt;/span&gt; male &lt;span style=&quot; color:#00aa00;&quot;&gt;OR&lt;/span&gt; 12345&lt;/p&gt;&lt;p&gt;&amp;quot;Tom Jack&amp;quot; Male 1234 &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;==&lt;/span&gt; (tom &lt;span style=&quot; color:#00aa00;&quot;&gt;AND&lt;/span&gt; jack) &lt;span style=&quot; color:#00aa00;&quot;&gt;OR&lt;/span&gt; male &lt;span style=&quot; color:#00aa00;&quot;&gt;OR&lt;/span&gt; 12345&lt;/p&gt;&lt;p&gt;&amp;quot;Tom Jack&amp;quot; -Male &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;==&lt;/span&gt; tom &lt;span style=&quot; color:#00aa00;&quot;&gt;AND&lt;/span&gt; jack &lt;span style=&quot; color:#00aa00;&quot;&gt;EXCEPT&lt;/span&gt; male&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="placeholderText">
-        <string>姓名,身份证,电话,产权/土地证明</string>
+        <string>Name, address, phone...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="findButton">
        <property name="text">
-        <string>查找(&amp;F)</string>
+        <string>Find(&amp;F)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="refreshButton">
        <property name="text">
-        <string>重置(&amp;R)</string>
+        <string>Refresh(&amp;R)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="Line" name="line">
+      <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -68,30 +68,61 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="addButton">
+      <widget class="QPushButton" name="printButton">
        <property name="text">
-        <string>添加(&amp;A)</string>
+        <string>Print(&amp;P)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportButton">
+       <property name="text">
+        <string>Export(&amp;E)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="modifyButton">
+       <property name="text">
+        <string>Modify(&amp;M)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="videoButton">
+       <property name="text">
+        <string>Video(&amp;V)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="delButton">
        <property name="text">
-        <string>删除(&amp;D)</string>
+        <string>Del(&amp;D)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="modifyButton">
+      <widget class="QPushButton" name="addButton">
        <property name="text">
-        <string>修改(&amp;M)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="printButton">
-       <property name="text">
-        <string>打印(&amp;P)</string>
+        <string>Add(&amp;A)</string>
        </property>
       </widget>
      </item>
@@ -99,6 +130,9 @@
    </item>
    <item>
     <widget class="QTableView" name="baseView">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
@@ -108,10 +142,42 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="pagenumEdit">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="inputMask">
+        <string>999</string>
+       </property>
+       <property name="text">
+        <string>10</string>
+       </property>
+       <property name="cursorPosition">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Items(&amp;I) of Each Page</string>
+       </property>
+       <property name="buddy">
+        <cstring>pagenumEdit</cstring>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -128,21 +194,21 @@
      <item>
       <widget class="QLabel" name="totalpageLabel">
        <property name="text">
-        <string>共 xxx页</string>
+        <string>Total xxx pages</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="prepageButton">
+      <widget class="QPushButton" name="preButton">
        <property name="text">
-        <string>上一页(&amp;P)</string>
+        <string>&lt;&lt;Pre(&amp;B)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="nextpageButton">
+      <widget class="QPushButton" name="nextButton">
        <property name="text">
-        <string>下一页(&amp;N)</string>
+        <string>Next(&amp;N)&gt;&gt;</string>
        </property>
       </widget>
      </item>
@@ -150,6 +216,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>baseView</tabstop>
+  <tabstop>keywordEdit</tabstop>
+  <tabstop>findButton</tabstop>
+  <tabstop>refreshButton</tabstop>
+  <tabstop>pagenumEdit</tabstop>
+  <tabstop>preButton</tabstop>
+  <tabstop>nextButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

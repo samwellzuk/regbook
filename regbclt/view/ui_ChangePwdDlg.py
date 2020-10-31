@@ -15,6 +15,9 @@ class Ui_ChangePwdDlg(object):
     def setupUi(self, ChangePwdDlg):
         ChangePwdDlg.setObjectName("ChangePwdDlg")
         ChangePwdDlg.resize(400, 250)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/images/app.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ChangePwdDlg.setWindowIcon(icon)
         ChangePwdDlg.setSizeGripEnabled(False)
         ChangePwdDlg.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ChangePwdDlg)

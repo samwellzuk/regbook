@@ -4,8 +4,17 @@
 Module implementing UserManageView.
 """
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QMutex
+from PyQt5.QtWidgets import QWidget, QMessageBox, QProgressDialog, QApplication
+
+from comm.asynctask import coroutine, AsyncTask
+from comm.utility import except_check
+from data.users import UserService
+
+from vm.users import UsersModel
+
+from .RegisterDlg import RegisterDlg
+from .ResetPwdDlg import RestPwdDlg
 
 from .ui_UserManageView import Ui_UserManageView
 
@@ -14,6 +23,7 @@ class UserManageView(QWidget, Ui_UserManageView):
     """
     Class documentation goes here.
     """
+
     def __init__(self, parent=None):
         """
         Constructor
@@ -23,43 +33,105 @@ class UserManageView(QWidget, Ui_UserManageView):
         """
         super(UserManageView, self).__init__(parent)
         self.setupUi(self)
-    
+        self._usersmodel = UsersModel()
+        self.usersView.setModel(self._usersmodel)
+        self._usersmodel.initView(self.usersView)
+
+        self._selectmodel = self.usersView.selectionModel()
+        self._selectmodel.currentRowChanged.connect(self.on_table_change)
+
+        self.svc = UserService()
+        progressdlg = QProgressDialog(parent=self)
+        progressdlg.setWindowModality(Qt.WindowModal)
+        progressdlg.setAutoClose(False)
+        progressdlg.setAutoReset(False)
+        progressdlg.setCancelButton(None)
+        self.progressdlg = progressdlg
+        #self.svc.progressUpdated.connect(self._update_progress)
+        #self.mutex = QMutex()
+
+    @pyqtSlot(int)
+    def _update_progress(self, progress):
+        try:
+            if not self.progressdlg.wasCanceled():
+                self.progressdlg.setValue(progress)
+        except Exception as e:
+            QMessageBox.warning(self, 'Error', str(e))
+
+    @coroutine(is_block=True)
+    def _refresh_users(self):
+        self.progressdlg.reset()
+        self.progressdlg.show()
+        self.progressdlg.setLabelText(f'Query user information ...')
+        try:
+            self._selectmodel.clear()
+            self.findnameEdit.setText('')
+            users = yield AsyncTask(self.svc.get_all_user)
+            self._usersmodel.reset_models(users)
+        finally:
+            self.progressdlg.cancel()
+
+    @pyqtSlot(QModelIndex, QModelIndex)
+    @except_check
+    def on_table_change(self, current, previous):
+        if current.isValid():
+            self.delButton.setEnabled(True)
+            self.resetButton.setEnabled(True)
+        else:
+            self.delButton.setEnabled(False)
+            self.resetButton.setEnabled(False)
+
+    @except_check
+    def activeView(self):
+        self._refresh_users()
+
     @pyqtSlot()
+    @except_check
     def on_findButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        self._selectmodel.clear()
+        name = self.findnameEdit.text()
+        if name:
+            users = []
+            if u := self.svc.get_user(name):
+                users.append(u)
+            self._usersmodel.reset_models(users)
+        else:
+            QMessageBox.information(self, 'Notice', 'Please input user name for search')
+
     @pyqtSlot()
+    @except_check
     def on_refreshButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        for i in range(1000):
+            print('on_refreshButton_clicked ', i)
+            self._refresh_users()
+
     @pyqtSlot()
+    @except_check
     def on_addButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        dlg = RegisterDlg(parent=self)
+        if dlg.exec() != RegisterDlg.Accepted:
+            return
+        user = self.svc.add_user(dlg.suser, dlg.spwd, dlg.bisadmin)
+        self._usersmodel.add_model(user)
+
     @pyqtSlot()
+    @except_check
     def on_delButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-    
+        index = self._selectmodel.currentIndex()
+        user = self._usersmodel.get_model(index.row())
+        result = QMessageBox.question(self, "Delete", f"Are you sure to delete {user.user} ?")
+        if result != QMessageBox.Yes:
+            return
+        self.svc.del_user(user.user)
+        self._usersmodel.remove_model(index.row())
+
     @pyqtSlot()
+    @except_check
     def on_resetButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        index = self._selectmodel.currentIndex()
+        user = self._usersmodel.get_model(index.row())
+        dlg = RestPwdDlg(user.user, parent=self)
+        if dlg.exec() != RestPwdDlg.Accepted:
+            return
+        self.svc.reset_pwd(user, dlg.snewpwd)
+        self._usersmodel.update_model(index.row(), user)

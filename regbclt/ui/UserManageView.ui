@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>913</width>
-    <height>421</height>
+    <width>974</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,33 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="finnameLabel">
+       <property name="text">
+        <string>User(&amp;X)</string>
+       </property>
+       <property name="buddy">
+        <cstring>findnameEdit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="findnameEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="findButton">
+       <property name="text">
+        <string>Find(&amp;F)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
+        <string>Refresh(&amp;U)</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="Line" name="line">
        <property name="orientation">
