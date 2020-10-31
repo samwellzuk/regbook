@@ -162,15 +162,6 @@ class AsyncTask(QObject):
     `on_finished` is called when the thread is complete.
 
     """
-    _out_counter = 0
-
-    @staticmethod
-    def check_thread():
-        while AsyncTask._out_counter != 0:
-            QApplication.processEvents()
-            time.sleep(0.05)
-        return
-
     def __init__(self, func, *args, **kwargs):
         super(AsyncTask, self).__init__()
         self.result = None  # Used for the result of the thread.
@@ -184,8 +175,6 @@ class AsyncTask(QObject):
 
     def start(self):
         self.objThread.start()
-        # called after thread created, no conflict with on_finished, because they all be called in UI thread
-        AsyncTask._out_counter += 1
 
     def customEvent(self, event):
         event.callback()
@@ -204,7 +193,6 @@ class AsyncTask(QObject):
             QTimer.singleShot(0, partial(self.finished_callback, result))
         self.objThread.quit()
         self.objThread.wait()
-        AsyncTask._out_counter -= 1
 
 
 class RunThreadCallback(QThread):
@@ -251,7 +239,7 @@ def coroutine(func=None, *, is_block=False):
     @wraps(func)
     def _wrapper(*args, **kwargs):
         def _execute(gen, data):
-            nonlocal genobj_finished
+            nonlocal out_counter
             try:
                 if data == id(gen):
                     obj = next(gen)
@@ -262,8 +250,7 @@ def coroutine(func=None, *, is_block=False):
                         else:
                             obj = gen.send(data)
                     except StopIteration as e:
-                        genobj_finished = True
-                        AsyncTask._out_counter -= 1
+                        out_counter -= 1
                         return getattr(e, "value", None)
                 if isinstance(obj, AsyncTask):
                     # Tell the thread to call `execute` when its done
@@ -274,8 +261,7 @@ def coroutine(func=None, *, is_block=False):
                     gen.close()
                     raise Exception("Using yield is only supported with AsyncTasks.")
             except Exception as e:
-                genobj_finished = True
-                AsyncTask._out_counter -= 1
+                out_counter -= 1
                 QMessageBox.warning(_get_parent_wnd(), 'Error', str(e))
             return None
 
@@ -284,11 +270,11 @@ def coroutine(func=None, *, is_block=False):
             return genobj
 
         # lock counter
-        AsyncTask._out_counter += 1
-        genobj_finished = False
+        out_counter = 1
+
         genrt = _execute(genobj, id(genobj))
         if is_block:
-            while not genobj_finished:
+            while out_counter != 0:
                 QApplication.processEvents()
                 time.sleep(0.05)
         return genrt

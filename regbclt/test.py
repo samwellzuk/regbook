@@ -2,15 +2,32 @@
 # Created by samwell
 import sys
 import time
-from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QMessageBox, QDialog, QPushButton
+from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
 
 from comm.asynctask import coroutine, AsyncTask
+from comm.utility import except_check
+
+from data.dbmgr import DBManager
+
+from view.ProgressDlg import ProgressDlg
+
+
+class UserService(QObject):
+    progressUpdated = pyqtSignal(int)
+
+    def get_all_user(self):
+        for i in range(10):
+            self.progressUpdated.emit(i * 10)
+            time.sleep(1)
+        self.progressUpdated.emit(100)
+        return []
 
 
 class Ui_LoginDlg(object):
     def setupUi(self, LoginDlg):
         LoginDlg.setObjectName("LoginDlg")
+        LoginDlg.setWindowModality(Qt.ApplicationModal)
         LoginDlg.resize(358, 118)
         LoginDlg.setSizeGripEnabled(False)
         LoginDlg.setModal(True)
@@ -32,12 +49,6 @@ class Ui_LoginDlg(object):
         self.cancelButton.setText(_translate("LoginDlg", "Quit"))
 
 
-def asy_func(count):
-    for i in range(count):
-        time.sleep(0.05)
-    return count
-
-
 class TestDlg(QDialog, Ui_LoginDlg):
     def __init__(self, parent=None):
         """
@@ -49,21 +60,46 @@ class TestDlg(QDialog, Ui_LoginDlg):
         super(QDialog, self).__init__(parent)
         self.setupUi(self)
 
+        self.progressdlg = ProgressDlg(parent=self)
+        self.svc = UserService()
+        self.svc.progressUpdated.connect(self._update_progress)
+
+    @pyqtSlot(int)
+    @except_check
+    def _update_progress(self, progress):
+        print("update: ", progress)
+        if self.progressdlg.is_open():
+            self.progressdlg.setValue(progress)
+
     @pyqtSlot()
+    @except_check
     def on_test(self):
-        for i in range(2000):
-            print('call ', i)
-            self.test()
+        self.test()
 
     @coroutine(is_block=True)
     def test(self):
-        count = yield AsyncTask(asy_func, 1)
+        self.progressdlg.setLabelText(f'Query user information ...')
+        self.progressdlg.open()
+        try:
+            yield AsyncTask(self.svc.get_all_user)
+        finally:
+            self.progressdlg.close()
+            print('is open:' , self.progressdlg.is_open())
+
+
+from view.MainWnd import MainWindow
 
 
 def main():
     app = QApplication(sys.argv)
+    mgr = DBManager()
+    mgr.auth('zy', '123', 'localhost')
+    # wmd = MainWindow()
+    # wmd.show()
+    # dlg = TestDlg(wmd)
     dlg = TestDlg()
-    return dlg.exec()
+    dlg.show()
+    return app.exec()
 
 
 if __name__ == '__main__':

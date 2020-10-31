@@ -14,11 +14,6 @@ class UserService(QObject):
     progressUpdated = pyqtSignal(int)
 
     def get_all_user(self) -> List[User]:
-        for i in range(11):
-            time.sleep(0.01)
-        return []
-
-    def test_get_all_user(self) -> List[User]:
         self.progressUpdated.emit(0)
         mgr = DBManager()
         result = mgr.get_db().command('usersInfo')

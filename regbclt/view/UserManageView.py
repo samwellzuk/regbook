@@ -4,8 +4,8 @@
 Module implementing UserManageView.
 """
 
-from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QMutex
-from PyQt5.QtWidgets import QWidget, QMessageBox, QProgressDialog, QApplication
+from PyQt5.QtCore import pyqtSlot, QModelIndex
+from PyQt5.QtWidgets import QWidget, QMessageBox
 
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
@@ -15,6 +15,7 @@ from vm.users import UsersModel
 
 from .RegisterDlg import RegisterDlg
 from .ResetPwdDlg import RestPwdDlg
+from .ProgressDlg import ProgressDlg
 
 from .ui_UserManageView import Ui_UserManageView
 
@@ -41,35 +42,27 @@ class UserManageView(QWidget, Ui_UserManageView):
         self._selectmodel.currentRowChanged.connect(self.on_table_change)
 
         self.svc = UserService()
-        progressdlg = QProgressDialog(parent=self)
-        progressdlg.setWindowModality(Qt.WindowModal)
-        progressdlg.setAutoClose(False)
-        progressdlg.setAutoReset(False)
-        progressdlg.setCancelButton(None)
-        self.progressdlg = progressdlg
-        #self.svc.progressUpdated.connect(self._update_progress)
-        #self.mutex = QMutex()
+        self.progressdlg = ProgressDlg(parent=self)
+        self.svc.progressUpdated.connect(self._update_progress)
 
     @pyqtSlot(int)
+    @except_check
     def _update_progress(self, progress):
-        try:
-            if not self.progressdlg.wasCanceled():
-                self.progressdlg.setValue(progress)
-        except Exception as e:
-            QMessageBox.warning(self, 'Error', str(e))
+        if self.progressdlg.is_open():
+            self.progressdlg.setValue(progress)
+
 
     @coroutine(is_block=True)
     def _refresh_users(self):
-        self.progressdlg.reset()
-        self.progressdlg.show()
         self.progressdlg.setLabelText(f'Query user information ...')
+        self.progressdlg.open()
         try:
             self._selectmodel.clear()
             self.findnameEdit.setText('')
             users = yield AsyncTask(self.svc.get_all_user)
             self._usersmodel.reset_models(users)
         finally:
-            self.progressdlg.cancel()
+            self.progressdlg.close()
 
     @pyqtSlot(QModelIndex, QModelIndex)
     @except_check
