@@ -6,16 +6,11 @@ from datetime import datetime
 from dataclasses import asdict
 import pymongo
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from .model import Member
 
 from .dbmgr import DBManager
-
-
-class Order(Enum):
-    ASCENDING = 1
-    DESCENDING = -1
 
 
 class MemberService(QObject):
@@ -25,14 +20,14 @@ class MemberService(QObject):
     def query_members(self, skip: int, limit: int = 0,
                       keyword: Optional[str] = None,
                       sortkey: Optional[str] = None,
-                      order: Optional[Order] = None) -> Tuple[int, List[Member]]:
+                      sortorder: Optional[int] = None) -> Tuple[int, List[Member]]:
         filter = {}
         if keyword:
             filter['$text'] = {'$search': keyword}
         projection = {'avatar': False}
-        if sortkey and order == Order.ASCENDING:
+        if sortkey and sortorder == Qt.AscendingOrder:
             sort = [(sortkey, pymongo.ASCENDING)]
-        elif sortkey and order == Order.DESCENDING:
+        elif sortkey and sortorder == Qt.DescendingOrder:
             sort = [(sortkey, pymongo.DESCENDING)]
         else:
             sort = [('_ts', pymongo.DESCENDING)]

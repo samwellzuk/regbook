@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>images/app.svg</file>
+    <file>images/avatar.png</file>
+    <file>images/thumbnail.png</file>
 </qresource>
 </RCC>

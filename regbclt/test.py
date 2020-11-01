@@ -2,8 +2,9 @@
 # Created by samwell
 import sys
 import time
-from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal, QByteArray
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
+from PyQt5.QtGui import QPixmap
 
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
@@ -84,7 +85,7 @@ class TestDlg(QDialog, Ui_LoginDlg):
             yield AsyncTask(self.svc.get_all_user)
         finally:
             self.progressdlg.close()
-            print('is open:' , self.progressdlg.is_open())
+            print('is open:', self.progressdlg.is_open())
 
 
 from view.MainWnd import MainWindow
@@ -92,6 +93,11 @@ from view.MainWnd import MainWindow
 
 def main():
     app = QApplication(sys.argv)
+    with open('images\\thumbnail.png', 'rb') as f:
+        b = QByteArray(f.read())
+        bmp = QPixmap()
+        bmp.loadFromData(b)
+
     mgr = DBManager()
     mgr.auth('zy', '123', 'localhost')
     # wmd = MainWindow()

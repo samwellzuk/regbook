@@ -1,13 +1,23 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
+import weakref
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt, pyqtSignal, QByteArray
+from PyQt5.QtGui import QPixmap
+
+_avatar_high = 130
+_avatar_width = 130
 
 
 class MembersModel(QAbstractTableModel):
+    sortChanged = pyqtSignal()
+
     def __init__(self):
         super().__init__()
+        self._avatar_default = QPixmap(":/images/thumbnail.png")
         self._models = []
+        self._avatars = []
         self._header = [
+            'avatar',
             'name',
             'cname',
             'sex',
@@ -30,6 +40,18 @@ class MembersModel(QAbstractTableModel):
             'baptismday',
             'venue',
         ]
+        self.sortkey = None
+        self.sortorder = None
+        self.view = None
+
+    def sort(self, column, order=Qt.AscendingOrder):
+        if column == -1 or column == 0:
+            self.sortkey = None
+            self.sortorder = None
+        else:
+            self.sortkey = self._header[column]
+            self.sortorder = order
+        self.sortChanged.emit()
 
     def rowCount(self, parent=QModelIndex(), *args, **kwargs):
         return len(self._models)
@@ -49,85 +71,114 @@ class MembersModel(QAbstractTableModel):
         if not index.isValid() or not (0 <= index.row() < len(self._models)):
             return QVariant()
         column = index.column()
-        item = self._models[index.row()]
-        if role == Qt.DisplayRole:
+        row = index.row()
+        item = self._models[row]
+        if role == Qt.DecorationRole:
             if column == 0:
+                if self._avatars[row]:
+                    return self._avatars[row]
+                else:
+                    return self._avatar_default
+        elif role == Qt.DisplayRole:
+            if column == 1:
                 return item.name
-            elif column == 1:
-                return item.cname
             elif column == 2:
-                return item.sex
+                return item.cname
             elif column == 3:
-                return item.birthday.strftime('%b/%d/%Y')
+                return item.sex
             elif column == 4:
-                return item.nation
+                return item.birthday.strftime('%b/%d/%Y') if item.birthday else None
             elif column == 5:
-                return item.street
+                return item.nation
             elif column == 6:
-                return item.city
+                return item.street
             elif column == 7:
-                return item.province
+                return item.city
             elif column == 8:
-                return item.homephone
+                return item.province
             elif column == 9:
-                return item.workphone
+                return item.homephone
             elif column == 10:
-                return item.cellphone
+                return item.workphone
             elif column == 11:
-                return item.education
+                return item.cellphone
             elif column == 12:
-                return item.occupation
+                return item.education
             elif column == 13:
-                return item.father
+                return item.occupation
             elif column == 14:
-                return item.mother
+                return item.father
             elif column == 15:
-                return item.saved
+                return item.mother
             elif column == 16:
-                return item.ledby
+                return item.saved
             elif column == 17:
-                return item.minister
+                return item.ledby
             elif column == 18:
-                return item.baptizer
+                return item.minister
             elif column == 19:
-                return item.baptismday.strftime('%b/%d/%Y')
+                return item.baptizer
             elif column == 20:
+                return item.baptismday.strftime('%b/%d/%Y') if item.baptismday else None
+            elif column == 21:
                 return item.venue
         return QVariant()
 
     def initView(self, tableView):
-        tableView.setColumnWidth(0, 100)  # name
-        tableView.setColumnWidth(1, 100)  # cname
-        tableView.setColumnWidth(2, 100)  # sex
-        tableView.setColumnWidth(3, 100)  # birthday
-        tableView.setColumnWidth(4, 100)  # nation
-        tableView.setColumnWidth(5, 100)  # street
-        tableView.setColumnWidth(6, 100)  # city
-        tableView.setColumnWidth(7, 100)  # province
-        tableView.setColumnWidth(8, 100)  # homephone
-        tableView.setColumnWidth(9, 100)  # workphone
-        tableView.setColumnWidth(10, 100)  # cellphone
-        tableView.setColumnWidth(11, 100)  # education
-        tableView.setColumnWidth(12, 100)  # occupation
-        tableView.setColumnWidth(13, 100)  # father
-        tableView.setColumnWidth(14, 100)  # mother
-        tableView.setColumnWidth(15, 100)  # saved
-        tableView.setColumnWidth(16, 100)  # ledby
-        tableView.setColumnWidth(17, 100)  # minister
-        tableView.setColumnWidth(18, 100)  # baptizer
-        tableView.setColumnWidth(19, 100)  # baptismday
-        tableView.setColumnWidth(20, 100)  # venue
+        tableView.setColumnWidth(0, _avatar_width)  # name
+        tableView.setColumnWidth(1, 200)  # name
+        tableView.setColumnWidth(2, 80)  # cname
+        tableView.setColumnWidth(3, 60)  # sex
+        tableView.setColumnWidth(4, 120)  # birthday
+        tableView.setColumnWidth(5, 60)  # nation
+        tableView.setColumnWidth(6, 400)  # street
+        tableView.setColumnWidth(7, 100)  # city
+        tableView.setColumnWidth(8, 100)  # province
+        tableView.setColumnWidth(9, 120)  # homephone
+        tableView.setColumnWidth(10, 120)  # workphone
+        tableView.setColumnWidth(11, 120)  # cellphone
+        tableView.setColumnWidth(12, 120)  # education
+        tableView.setColumnWidth(13, 200)  # occupation
+        tableView.setColumnWidth(14, 200)  # father
+        tableView.setColumnWidth(15, 200)  # mother
+        tableView.setColumnWidth(16, 100)  # saved
+        tableView.setColumnWidth(17, 200)  # ledby
+        tableView.setColumnWidth(18, 200)  # minister
+        tableView.setColumnWidth(19, 200)  # baptizer
+        tableView.setColumnWidth(20, 120)  # baptismday
+        tableView.setColumnWidth(21, 250)  # venue
+        self.view = weakref.ref(tableView)
+
+    def _update_high(self):
+        tableview = self.view()
+        if tableview:
+            for i in range(len(self._models)):
+                h = tableview.rowHeight(i)
+                if h != _avatar_high:
+                    tableview.setRowHeight(i, _avatar_high)
+
+    def _load_pic(self, imgb):
+        if imgb is None:
+            return None
+        b = QByteArray(imgb)
+        bmp = QPixmap()
+        bmp.loadFromData(b)
+        return bmp
 
     def add_model(self, m, pos=0):
         self.beginInsertRows(QModelIndex(), pos, pos)
         self._models.insert(pos, m)
+        self._avatars.insert(pos, self._load_pic(m.thumbnail))
         self.endInsertRows()
+        self._update_high()
 
     def get_model(self, row):
         return self._models[row]
 
     def update_model(self, row, m):
         self._models[row] = m
+        self._avatars[row] = self._load_pic(m.thumbnail)
+
         left = self.index(row, 0)
         rigth = self.index(row, len(self._header))
         self.dataChanged.emit(left, rigth)
@@ -135,9 +186,16 @@ class MembersModel(QAbstractTableModel):
     def remove_model(self, row):
         self.beginRemoveRows(QModelIndex(), row, row)
         del self._models[row]
+        del self._avatars[row]
         self.endRemoveRows()
 
     def reset_models(self, mlist=None):
         self.beginResetModel()
-        self._models = [] if mlist is None else mlist
+        if mlist:
+            self._models = mlist
+            self._avatars = [self._load_pic(m.thumbnail) for m in mlist]
+        else:
+            self._models = []
+            self._avatars = []
         self.endResetModel()
+        self._update_high()

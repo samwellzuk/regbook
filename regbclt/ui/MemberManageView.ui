@@ -214,16 +214,30 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="startButton">
+       <property name="text">
+        <string>&lt;&lt;Start(S)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="preButton">
        <property name="text">
-        <string>&lt;&lt;Pre(&amp;B)</string>
+        <string>&lt;Pre(&amp;B)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="nextButton">
        <property name="text">
-        <string>Next(&amp;N)&gt;&gt;</string>
+        <string>Next(&amp;N)&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="endButton">
+       <property name="text">
+        <string>End(&amp;M)&gt;&gt;</string>
        </property>
       </widget>
      </item>
