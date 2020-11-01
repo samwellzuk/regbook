@@ -57,9 +57,3 @@ class Member:
     thumbnail: Optional[bytes] = None
     _id: Optional[ObjectId] = None
     _ts: Optional[datetime] = None
-
-    def to_short_dict(self):
-        result = asdict(self)
-        result.pop('_id')
-        result.pop('_ts')
-        return result

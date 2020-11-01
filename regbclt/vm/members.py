@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt, pyqtSignal
-
-from data.members import MemberService
-from data.model import Member
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
 
 
 class MembersModel(QAbstractTableModel):

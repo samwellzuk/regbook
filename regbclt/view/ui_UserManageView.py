@@ -49,6 +49,7 @@ class Ui_UserManageView(object):
         self.horizontalLayout_2.addWidget(self.resetButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.usersView = QtWidgets.QTableView(UserManageView)
+        self.usersView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.usersView.setAlternatingRowColors(True)
         self.usersView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.usersView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)

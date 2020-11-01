@@ -35,6 +35,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="findButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Find(&amp;F)</string>
        </property>
@@ -68,9 +71,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="printButton">
+      <widget class="QPushButton" name="addButton">
        <property name="text">
-        <string>Print(&amp;P)</string>
+        <string>New(&amp;A)</string>
        </property>
       </widget>
      </item>
@@ -100,6 +103,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="modifyButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Modify(&amp;M)</string>
        </property>
@@ -107,6 +113,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="videoButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Video(&amp;V)</string>
        </property>
@@ -114,15 +123,21 @@
      </item>
      <item>
       <widget class="QPushButton" name="delButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Del(&amp;D)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="addButton">
+      <widget class="QPushButton" name="printButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string>Add(&amp;A)</string>
+        <string>Print(&amp;P)</string>
        </property>
       </widget>
      </item>
@@ -158,13 +173,13 @@
         </size>
        </property>
        <property name="inputMask">
-        <string>999</string>
+        <string>000</string>
        </property>
        <property name="text">
         <string>10</string>
        </property>
        <property name="cursorPosition">
-        <number>0</number>
+        <number>3</number>
        </property>
       </widget>
      </item>
@@ -221,9 +236,15 @@
   <tabstop>keywordEdit</tabstop>
   <tabstop>findButton</tabstop>
   <tabstop>refreshButton</tabstop>
-  <tabstop>pagenumEdit</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>exportButton</tabstop>
+  <tabstop>modifyButton</tabstop>
+  <tabstop>videoButton</tabstop>
+  <tabstop>delButton</tabstop>
+  <tabstop>printButton</tabstop>
   <tabstop>preButton</tabstop>
   <tabstop>nextButton</tabstop>
+  <tabstop>pagenumEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import QWidget, QMessageBox
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
 from data.users import UserService
-
 from vm.users import UsersModel
 
 from .RegisterDlg import RegisterDlg
@@ -44,6 +43,7 @@ class UserManageView(QWidget, Ui_UserManageView):
         self.svc = UserService()
         self.progressdlg = ProgressDlg(parent=self)
         self.svc.progressUpdated.connect(self._update_progress)
+        self.svc.progressTxtChanged.connect(self._update_label)
 
     @pyqtSlot(int)
     @except_check
@@ -51,10 +51,14 @@ class UserManageView(QWidget, Ui_UserManageView):
         if self.progressdlg.is_open():
             self.progressdlg.setValue(progress)
 
+    @pyqtSlot(str)
+    @except_check
+    def _update_label(self, txt):
+        if self.progressdlg.is_open():
+            self.progressdlg.setLabelText(txt)
 
     @coroutine(is_block=True)
     def _refresh_users(self):
-        self.progressdlg.setLabelText(f'Query user information ...')
         self.progressdlg.open()
         try:
             self._selectmodel.clear()
@@ -94,9 +98,7 @@ class UserManageView(QWidget, Ui_UserManageView):
     @pyqtSlot()
     @except_check
     def on_refreshButton_clicked(self):
-        for i in range(1000):
-            print('on_refreshButton_clicked ', i)
-            self._refresh_users()
+        self._refresh_users()
 
     @pyqtSlot()
     @except_check
@@ -126,5 +128,5 @@ class UserManageView(QWidget, Ui_UserManageView):
         dlg = RestPwdDlg(user.user, parent=self)
         if dlg.exec() != RestPwdDlg.Accepted:
             return
-        self.svc.reset_pwd(user, dlg.snewpwd)
+        user = self.svc.reset_pwd(user, dlg.snewpwd)
         self._usersmodel.update_model(index.row(), user)
