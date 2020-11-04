@@ -3,14 +3,18 @@
 """
 Module implementing RestPwdDlg.
 """
-from PyQt5.QtCore import pyqtSlot, QByteArray
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QPixmap
+import os
+from pathlib import Path
+
+from PyQt5.QtCore import pyqtSlot, QByteArray, QStandardPaths
+from PyQt5.QtWidgets import QDialog, QFileDialog
+from PyQt5.QtGui import QPixmap, QImage
 
 from comm.utility import except_check
 from settings import config, cities_dict
 
 from .ui_MemberDlg import Ui_MemberDlg
+from .PhotoEditorDlg import PhotoEditorDlg
 
 
 class MemberDlg(QDialog, Ui_MemberDlg):
@@ -58,24 +62,63 @@ class MemberDlg(QDialog, Ui_MemberDlg):
         if member.baptismday:
             self.baptismdayDt.setDateTime(member.baptismday)
         self.venueEdit.setText(member.venue)
-
         if member.avatar:
             b = QByteArray(member.avatar)
             bmp = QPixmap()
             bmp.loadFromData(b)
             self.avatarLabel.setPixmap(bmp)
+        self.downloadButton.setEnabled(True if member.photo else False)
 
     @pyqtSlot(str)
+    @except_check
     def on_provinceBox_currentTextChanged(self, province):
         self.cityBox.clear()
         if province in cities_dict:
             self.cityBox.addItems(cities_dict[province])
 
     @pyqtSlot()
-    def on_avatarButton_clicked(self):
-        pass
+    @except_check
+    def on_downloadButton_clicked(self):
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Image",
+            QStandardPaths.writableLocation(QStandardPaths.PicturesLocation),
+            f"Image Files(*{self.member.photofmt})"
+        )
+        fp = Path(filename).with_suffix(self.member.photofmt)
+        with open(str(fp), 'wb') as of:
+            of.write(self.member.photo)
 
     @pyqtSlot()
+    @except_check
+    def on_uploadButton_clicked(self):
+        dirs = QStandardPaths.standardLocations(QStandardPaths.PicturesLocation)
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Image",
+            dirs[0] if dirs else '.',
+            "Image Files(*.bmp *.gif *.jpg *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
+        )
+        fp = Path(filename)
+        if fp.is_file():
+            photofmt = fp.suffix.lower()
+            with open(filename, 'rb') as bf:
+                photobin = bf.read()
+            img = QImage(filename)
+            dlg = PhotoEditorDlg(img, parent=self)
+            if dlg.exec() == PhotoEditorDlg.Accepted:
+                self.member.photo = photobin
+                self.member.photofmt = photofmt
+                self.member.avatar = dlg.avatar
+                self.member.thumbnail = dlg.thumbnail
+                b = QByteArray(dlg.avatar)
+                bmp = QPixmap()
+                bmp.loadFromData(b)
+                self.avatarLabel.setPixmap(bmp)
+                self.downloadButton.setEnabled(True)
+
+    @pyqtSlot()
+    @except_check
     def accept(self):
         self.member.name = self.nameEdit.text()
         self.member.cname = self.cnameEdit.text()

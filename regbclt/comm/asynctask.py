@@ -260,6 +260,9 @@ def coroutine(func=None, *, is_block=False):
                 else:
                     gen.close()
                     raise Exception("Using yield is only supported with AsyncTasks.")
+            except StopIteration as e:
+                out_counter -= 1
+                return getattr(e, "value", None)
             except Exception as e:
                 out_counter -= 1
                 QMessageBox.warning(_get_parent_wnd(), 'Error', str(e))

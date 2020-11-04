@@ -53,6 +53,8 @@ class Member:
     baptizer: Optional[str] = None  # ?
     baptismday: Optional[datetime] = None
     venue: Optional[str] = None
+    photo: Optional[bytes] = None
+    photofmt: Optional[str] = None
     avatar: Optional[bytes] = None
     thumbnail: Optional[bytes] = None
     _id: Optional[ObjectId] = None

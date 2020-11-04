@@ -93,6 +93,15 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         finally:
             self.progressdlg.close()
 
+    @coroutine(is_block=True)
+    def _query_photo(self, member):
+        if member.thumbnail is not None and member.avatar is None:
+            self.progressdlg.open()
+            try:
+                yield AsyncTask(self.svc.get_member_avatar, member)
+            finally:
+                self.progressdlg.close()
+
     @pyqtSlot(QModelIndex, QModelIndex)
     @except_check
     def on_table_change(self, current, previous):
@@ -136,6 +145,7 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     def on_modifyButton_clicked(self):
         index = self._selectmodel.currentIndex()
         oldmem = self._membersmodel.get_model(index.row())
+        self._query_photo(oldmem)
         dlg = MemberDlg(copy(oldmem), parent=self)
         if dlg.exec() == MemberDlg.Accepted:
             member = self.svc.update_member(oldmem, dlg.member)

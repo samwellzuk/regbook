@@ -73,7 +73,7 @@
      <item>
       <widget class="QPushButton" name="addButton">
        <property name="text">
-        <string>New(&amp;A)</string>
+        <string>New(&amp;N)</string>
        </property>
       </widget>
      </item>
@@ -117,7 +117,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Video(&amp;V)</string>
+        <string>Vedio(&amp;V)</string>
        </property>
       </widget>
      </item>
@@ -216,28 +216,28 @@
      <item>
       <widget class="QPushButton" name="startButton">
        <property name="text">
-        <string>&lt;&lt;Start(S)</string>
+        <string>|&lt;Begin(&amp;A)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="preButton">
        <property name="text">
-        <string>&lt;Pre(&amp;B)</string>
+        <string>&lt;&lt;Pre(&amp;S)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="nextButton">
        <property name="text">
-        <string>Next(&amp;N)&gt;</string>
+        <string>Next(&amp;F)&gt;&gt;</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="endButton">
        <property name="text">
-        <string>End(&amp;M)&gt;&gt;</string>
+        <string>End(&amp;G)&gt;|</string>
        </property>
       </widget>
      </item>

@@ -2,9 +2,11 @@
 # Created by samwell
 import sys
 import time
-from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal, QByteArray
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton
-from PyQt5.QtGui import QPixmap
+
+from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal, QRectF
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, \
+    QFileDialog
+from PyQt5.QtGui import QPixmap, QPen, QBrush, QPainter, QImage, QTransform
 
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
@@ -12,6 +14,7 @@ from comm.utility import except_check
 from data.dbmgr import DBManager
 
 from view.ProgressDlg import ProgressDlg
+from view.PhotoWidget import PhotoWidget
 
 
 class UserService(QObject):
@@ -75,7 +78,7 @@ class TestDlg(QDialog, Ui_LoginDlg):
     @pyqtSlot()
     @except_check
     def on_test(self):
-        self.test()
+        self.test2()
 
     @coroutine(is_block=True)
     def test(self):
@@ -87,25 +90,44 @@ class TestDlg(QDialog, Ui_LoginDlg):
             self.progressdlg.close()
             print('is open:', self.progressdlg.is_open())
 
+    def test1(self):
+        self.scene = QGraphicsScene()
+        self.view = QGraphicsView(self.scene, parent=self)
+        item = QGraphicsPixmapItem(QPixmap(":/images/thumbnail.png"))
+        self.scene.addItem(item)
+        self.view.show()
+
+    def test2(self):
+        scene = QGraphicsScene()
+        scene.addRect(QRectF(0, 0, 100, 200), QPen(Qt.black), QBrush(Qt.green))
+
+        pixmap = QPixmap()
+
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+        scene.render(painter)
+        painter.end()
+
+        pixmap.save("scene.png", "PNG")
+
 
 from view.MainWnd import MainWindow
 
 
 def main():
     app = QApplication(sys.argv)
-    with open('images\\thumbnail.png', 'rb') as f:
-        b = QByteArray(f.read())
-        bmp = QPixmap()
-        bmp.loadFromData(b)
+    fileName, _ = QFileDialog.getOpenFileName(None, "Open Image", "", "Image Files (*.png *.jpg *.bmp)")
+    srcimg = QImage(fileName)
+    center = srcimg.rect().center()
+    tf = QTransform()
+    tf.translate(center.x(), center.y())
+    tf.rotate(90)
+    dstImg = srcimg.transformed(tf)
+    dstImg.save('d:\\1.jpg', "JPG")
 
-    mgr = DBManager()
-    mgr.auth('zy', '123', 'localhost')
-    # wmd = MainWindow()
-    # wmd.show()
-    # dlg = TestDlg(wmd)
-    dlg = TestDlg()
-    dlg.show()
-    return app.exec()
+    # wnd = PhotoWidget(img)
+    # wnd.show()
+    # return app.exec()
 
 
 if __name__ == '__main__':

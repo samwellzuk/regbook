@@ -99,13 +99,15 @@ class MemberService(QObject):
         return newm
 
     def get_member_avatar(self, member: Member) -> Member:
-        if member.thumbnail is not None and member.avatar is None:
-            self.progressTxtChanged.emit('Querying avatar...')
-            self.progressUpdated.emit(0)
-            coll = DBManager().get_db().get_collection('members')
-            doc = coll.find_one({'_id': member._id, '_ts': member._ts}, projection={'avatar': True})
-            if not doc:
-                raise RuntimeError("Can't find member, please refresh!")
-            member.avatar = doc['avatar']
+        self.progressTxtChanged.emit('Querying avatar...')
+        self.progressUpdated.emit(0)
+        coll = DBManager().get_db().get_collection('members')
+        doc = coll.find_one({'_id': member._id, '_ts': member._ts},
+                            projection={'photo': True, 'photofmt': True, 'avatar': True})
+        if not doc:
+            raise RuntimeError("Can't find member, please refresh!")
+        member.photo = doc['photo'] if 'photo' in doc else None
+        member.photofmt = doc['photofmt'] if 'photofmt' in doc else None
+        member.avatar = doc['avatar'] if 'avatar' in doc else None
         self.progressUpdated.emit(100)
         return member
