@@ -131,4 +131,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    from comm.filetype import _test
+    _test()
+    #main()
