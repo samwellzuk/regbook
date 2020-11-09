@@ -17,6 +17,7 @@ from vm.members import MembersModel
 from .ui_MemberManageView import Ui_MemberManageView
 from .ProgressDlg import ProgressDlg
 from .MemberDlg import MemberDlg
+from .MediaManageDlg import MediaManageDlg
 
 _default_pagenum = '10'
 
@@ -226,7 +227,10 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     @pyqtSlot()
     @except_check
     def on_videoButton_clicked(self):
-        pass
+        index = self._selectmodel.currentIndex()
+        member = self._membersmodel.get_model(index.row())
+        dlg = MediaManageDlg(member, parent=self)
+        dlg.exec()
 
     @pyqtSlot()
     @except_check

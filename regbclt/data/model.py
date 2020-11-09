@@ -1,6 +1,6 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, InitVar
 from uuid import UUID
 from typing import Optional, List, Any, Dict
 
@@ -59,3 +59,41 @@ class Member:
     thumbnail: Optional[bytes] = None
     _id: Optional[ObjectId] = None
     _ts: Optional[datetime] = None
+
+
+@dataclass
+class VirFile:
+    length: int
+    chunkSize: int
+    uploadDate: datetime
+    filename: Optional[str] = None
+    md5: Optional[str] = None  # deprecated
+    contentType: Optional[str] = None  # deprecated
+    aliases: Optional[List[str]] = None  # deprecated
+    metadata: InitVar[Dict] = None  # init var, to make exif thumbnail
+    exif: Optional[str] = field(init=False)
+    thumbnail: Optional[bytes] = field(init=False)
+    owner_id: Optional[ObjectId] = field(init=False)
+    _id: Optional[ObjectId] = None
+
+    def __post_init__(self, metadata):
+        self.owner_id = metadata['owner_id'] if 'owner_id' in metadata else None
+        self.exif = metadata['exif'] if 'exif' in metadata else None
+        self.thumbnail = metadata['thumbnail'] if 'thumbnail' in metadata else None
+
+    def to_dict(self):
+        di = asdict(self)
+        di['metadata'] = {}
+        if 'owner_id' in di:
+            val = di['owner_id']
+            di.pop('owner_id')
+            di['metadata']['owner_id'] = val
+        if 'exif' in di:
+            val = di['exif']
+            di.pop('exif')
+            di['metadata']['exif'] = val
+        if 'thumbnail' in di:
+            val = di['thumbnail']
+            di.pop('thumbnail')
+            di['metadata']['thumbnail'] = val
+        return di

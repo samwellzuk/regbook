@@ -26,3 +26,6 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
         """
         super(MediaManageDlg, self).__init__(parent)
         self.setupUi(self)
+        with open(r'D:\ChruchProjects\regbook\regbclt\exiftool\1.html') as f:
+            context = f.read()
+            self.exifText.setHtml(context)

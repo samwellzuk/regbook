@@ -2,10 +2,12 @@
 # Created by samwell
 import sys
 import time
+import os
+import pathlib
 
 from PyQt5.QtCore import pyqtSlot, QRect, QCoreApplication, Qt, QObject, pyqtSignal, QRectF
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, \
-    QFileDialog
+    QFileDialog, QLabel
 from PyQt5.QtGui import QPixmap, QPen, QBrush, QPainter, QImage, QTransform
 
 from comm.asynctask import coroutine, AsyncTask
@@ -15,6 +17,10 @@ from data.dbmgr import DBManager
 
 from view.ProgressDlg import ProgressDlg
 from view.PhotoWidget import PhotoWidget
+
+from comm.exiftool import extract_exif
+from comm.iconextract import extract
+from settings import tmp_dir
 
 
 class UserService(QObject):
@@ -114,7 +120,7 @@ class TestDlg(QDialog, Ui_LoginDlg):
 from view.MainWnd import MainWindow
 
 
-def main():
+def main1():
     app = QApplication(sys.argv)
     fileName, _ = QFileDialog.getOpenFileName(None, "Open Image", "", "Image Files (*.png *.jpg *.bmp)")
     srcimg = QImage(fileName)
@@ -130,7 +136,50 @@ def main():
     # return app.exec()
 
 
+def test():
+    filelist = []
+    r = os.path.join(os.getcwd(), 'exiftool')
+    r = r'C:\Users\atten\Desktop\手机照片'
+    for root, dirs, files in os.walk(r):
+        for f in files:
+            filelist.append(os.path.join(root, f))
+    tmppath = pathlib.Path(tmp_dir)
+    for f in filelist:
+        print('-------------------------')
+        print('Getting ', f)
+        try:
+            sreport, img = extract_exif(f)
+            fp = pathlib.Path(f)
+            newpath = tmppath.joinpath(fp.name)
+            newpath.mkdir()
+
+            ftxt = newpath.joinpath('default.htm')
+            fimg = newpath.joinpath('default.jpg')
+            with ftxt.open('w', encoding='utf8') as of:
+                of.write(sreport)
+                print('Ok ', ftxt)
+            if img:
+                with fimg.open('wb') as of:
+                    of.write(img)
+                    print('Ok image ', fimg)
+        except Exception as e:
+            print('Failed : ', e)
+
+
+def main():
+    app = QApplication(sys.argv)
+    dlg = TestDlg()
+    dlg.exec()
+    # data = extract('C:\Windows\SystemResources\imageres.dll.mun', 2)
+    # with open('imageres.ico', 'wb') as of:
+    #     of.write(data)
+    fileName, _ = QFileDialog.getOpenFileName(None, "Open Image", "", "Image Files (*.png *.jpg *.bmp *.ico)")
+    pixmap = QPixmap(fileName)
+    label = QLabel()
+    label.setPixmap(pixmap)
+    label.show()
+    return app.exec()
+
+
 if __name__ == '__main__':
-    from comm.filetype import _test
-    _test()
-    #main()
+    main()

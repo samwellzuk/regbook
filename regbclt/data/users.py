@@ -6,7 +6,6 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from .model import User, admin_role, rw_role, change_self_role
 
 from .dbmgr import DBManager
-import time
 
 
 class UserService(QObject):
