@@ -63,37 +63,30 @@ class Member:
 
 @dataclass
 class VirFile:
+    filename: str
     length: int
     chunkSize: int
-    uploadDate: datetime
-    filename: Optional[str] = None
-    md5: Optional[str] = None  # deprecated
-    contentType: Optional[str] = None  # deprecated
-    aliases: Optional[List[str]] = None  # deprecated
+    uploadDate: Optional[datetime]
+    _id: Optional[ObjectId] = None
     metadata: InitVar[Dict] = None  # init var, to make exif thumbnail
+    owner_id: Optional[ObjectId] = field(init=False)
+    md5: Optional[str] = field(init=False)
     exif: Optional[str] = field(init=False)
     thumbnail: Optional[bytes] = field(init=False)
-    owner_id: Optional[ObjectId] = field(init=False)
-    _id: Optional[ObjectId] = None
 
     def __post_init__(self, metadata):
         self.owner_id = metadata['owner_id'] if 'owner_id' in metadata else None
+        self.md5 = metadata['md5'] if 'md5' in metadata else None
         self.exif = metadata['exif'] if 'exif' in metadata else None
         self.thumbnail = metadata['thumbnail'] if 'thumbnail' in metadata else None
 
     def to_dict(self):
         di = asdict(self)
         di['metadata'] = {}
-        if 'owner_id' in di:
-            val = di['owner_id']
-            di.pop('owner_id')
-            di['metadata']['owner_id'] = val
-        if 'exif' in di:
-            val = di['exif']
-            di.pop('exif')
-            di['metadata']['exif'] = val
-        if 'thumbnail' in di:
-            val = di['thumbnail']
-            di.pop('thumbnail')
-            di['metadata']['thumbnail'] = val
+        keys = ['owner_id', 'md5', 'exif', 'thumbnail']
+        for key in keys:
+            if key in di:
+                val = di[key]
+                di.pop(key)
+                di['metadata'][key] = val
         return di

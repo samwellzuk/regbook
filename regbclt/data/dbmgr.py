@@ -97,7 +97,7 @@ class DBManager(metaclass=Singleton):
             self._client = client
         return True
 
-    def logout(self):
+    def logout(self) -> NoReturn:
         assert (self.cur_user and self._client)
         self._client.close()
         self._client = None

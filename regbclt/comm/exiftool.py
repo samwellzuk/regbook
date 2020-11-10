@@ -32,7 +32,7 @@ def _filiter_exif(sinfo: str) -> Tuple[str, bool]:
 
 def _run_exif(cmds, fout):
     with tempfile.TemporaryFile(dir=tmp_dir) as ferr:
-        result = subprocess.run(cmds, stdout=fout, stderr=ferr)
+        result = subprocess.run(cmds, stdout=fout, stderr=ferr, timeout=100)
         if result.returncode != 0:
             ferr.seek(0)
             serr = ferr.read().decode(encoding='UTF8', errors='ignore')

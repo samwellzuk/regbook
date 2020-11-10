@@ -1,6 +1,6 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
-from typing import Tuple
+from typing import Tuple, NoReturn
 
 from PyQt5.QtCore import pyqtSlot, Qt, pyqtSignal, QRectF, QPointF, QRect, QIODevice, QByteArray, QBuffer
 from PyQt5.QtWidgets import QWidget
@@ -122,7 +122,7 @@ class PhotoWidget(QWidget):
         return rectimg
 
     @except_check
-    def paintEvent(self, event: QPaintEvent) -> None:
+    def paintEvent(self, event):
         painter = QPainter(self)
 
         rectvp = self._get_viewport()
@@ -187,12 +187,12 @@ class PhotoWidget(QWidget):
             self.ratioChanged.emit(val)
 
     @except_check
-    def mousePressEvent(self, event: QMouseEvent) -> None:
+    def mousePressEvent(self, event):
         if event.buttons() & Qt.LeftButton:
             self.lastpt = event.pos()
 
     @except_check
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    def mouseMoveEvent(self, event):
         if event.buttons() & Qt.LeftButton:
             if self.lastpt:
                 curpt = event.pos()
@@ -200,7 +200,7 @@ class PhotoWidget(QWidget):
                 self.lastpt = curpt
 
     @except_check
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event):
         if event.buttons() & Qt.LeftButton:
             if self.lastpt:
                 curpt = event.pos()
@@ -208,7 +208,7 @@ class PhotoWidget(QWidget):
                 self.lastpt = None
 
     @except_check
-    def wheelEvent(self, event: QWheelEvent) -> None:
+    def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
             self.zoom(int(self.ratio * 10) + 1)
         else:

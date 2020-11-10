@@ -1,6 +1,6 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
-from typing import Tuple, Optional
+from typing import Tuple, Optional, NoReturn, List
 import pathlib
 import os
 import dbm
@@ -15,13 +15,13 @@ from .iconextract import extract
 _icons_db = None
 
 
-def initialize():
+def initialize() -> NoReturn:
     global _icons_db
     if _icons_db is None:
         _icons_db = dbm.open(os.path.join(settings.cache_dir, 'icons'), 'c')
 
 
-def uninialize():
+def uninialize() -> NoReturn:
     global _icons_db
     if _icons_db:
         _icons_db.close()
@@ -83,7 +83,7 @@ def query_file_icon(postfix: str) -> Optional[bytes]:
     return img
 
 
-def _get_all_type():
+def _get_all_type() -> List[str]:
     postfixs = []
     hk = win32api.RegOpenKeyEx(win32con.HKEY_CLASSES_ROOT, None)
     try:
@@ -100,7 +100,7 @@ def _get_all_type():
     return postfixs
 
 
-def scan_register():
+def scan_register() -> NoReturn:
     assert _icons_db == None
     settings.initialize()
     initialize()

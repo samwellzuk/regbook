@@ -1,5 +1,8 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
+from typing import List, Optional, NoReturn
+from collections.abc import Sequence
+
 import struct
 import pefile
 
@@ -13,7 +16,7 @@ class ExtractIcon(object):
     RES_ICON = 1
     RES_CURSOR = 2
 
-    def __init__(self, filep):
+    def __init__(self, filep: str):
         self.pe = pefile.PE(filep)
 
     def find_dir_bytype(self, restype):
@@ -134,7 +137,7 @@ class ExtractIcon(object):
         return bitdict[bitkeys[-1]]
 
 
-def extract(filepath, index, bestwidth=None):
+def extract(filepath: str, index: int, bestwidth: int = None) -> bytes:
     extractor = ExtractIcon(filepath)
     groups = extractor.get_group_icons(index)
     bestid = extractor.best_icon(groups, bestwidth)

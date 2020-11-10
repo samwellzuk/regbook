@@ -41,14 +41,17 @@
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
-         <property name="dragDropMode">
-          <enum>QAbstractItemView::DropOnly</enum>
-         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
-         <property name="movement">
-          <enum>QListView::Static</enum>
+         <property name="resizeMode">
+          <enum>QListView::Adjust</enum>
+         </property>
+         <property name="gridSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
          </property>
          <property name="viewMode">
           <enum>QListView::IconMode</enum>
@@ -95,6 +98,20 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
+        <string>Refresh(&amp;R)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="previewButton">
+       <property name="text">
+        <string>Preview(&amp;P)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="uploadButton">
        <property name="text">
         <string>Upload(&amp;U)</string>
@@ -109,9 +126,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="previewButton">
+      <widget class="QPushButton" name="deleteButton">
        <property name="text">
-        <string>Preview(&amp;P)</string>
+        <string>Delete(&amp;E)</string>
        </property>
       </widget>
      </item>

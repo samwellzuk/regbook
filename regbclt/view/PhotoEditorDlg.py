@@ -42,6 +42,6 @@ class PhotoEditorDlg(QDialog, Ui_PhotoEditorDlg):
         self.zoomSlider.setValue(val)
 
     @except_check
-    def accept(self) -> None:
+    def accept(self):
         self.avatar, self.thumbnail = self.photoWidget.save_image()
         super(PhotoEditorDlg, self).accept()

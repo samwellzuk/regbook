@@ -40,7 +40,7 @@ class LoginDlg(QDialog, Ui_LoginDlg):
 
     @pyqtSlot()
     @coroutine(is_block=True)
-    def accept(self) -> None:
+    def accept(self):
         sip = self.server.text()
         suser = self.username.text()
         spwd = self.password.text()

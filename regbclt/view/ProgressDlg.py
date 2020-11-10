@@ -24,13 +24,13 @@ class ProgressDlg(QDialog, Ui_ProgressDlg):
         super(ProgressDlg, self).__init__(parent)
         self.setupUi(self)
 
-    def setLabelText(self, txt: str) -> NoReturn:
+    def setLabelText(self, txt):
         self.progressTxt.setText(txt)
 
-    def setValue(self, progress: int) -> NoReturn:
+    def setValue(self, progress):
         self.progressBar.setValue(progress)
 
-    def open(self) -> NoReturn:
+    def open(self):
         super().open()
         self.progressBar.setValue(0)
 
@@ -44,14 +44,14 @@ class ProgressDlg(QDialog, Ui_ProgressDlg):
     def exec(self) -> int:
         raise NotImplemented('exec')
 
-    def show(self) -> None:
+    def show(self):
         raise NotImplemented('show')
 
-    def accept(self) -> NoReturn:
+    def accept(self):
         return
 
-    def done(self, r: int) -> NoReturn:
+    def done(self, r):
         return
 
-    def reject(self) -> NoReturn:
+    def reject(self):
         return
