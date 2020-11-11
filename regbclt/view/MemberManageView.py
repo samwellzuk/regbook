@@ -10,9 +10,13 @@ from PyQt5.QtWidgets import QWidget, QMessageBox
 from copy import copy
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
-from data.members import MemberService
+
 from data.model import Member
+from data.dbmgr import DBManager
 from vm.members import MembersModel
+
+from data.members import MemberService
+from data.vfile import VirFileService
 
 from .ui_MemberManageView import Ui_MemberManageView
 from .ProgressDlg import ProgressDlg
@@ -49,24 +53,16 @@ class MemberManageView(QWidget, Ui_MemberManageView):
 
         self.svc = MemberService()
         self.progressdlg = ProgressDlg(parent=self)
-        self.svc.progressUpdated.connect(self._update_progress)
-        self.svc.progressTxtChanged.connect(self._update_label)
+        self.svc.progressUpdated.connect(self.progressdlg.setValue)
+        self.svc.progressTxtChanged.connect(self.progressdlg.setLabelText)
+
+        self.vif_svc = VirFileService()
+        self.vif_svc.progressUpdated.connect(self.progressdlg.setValue)
+        self.vif_svc.progressTxtChanged.connect(self.progressdlg.setLabelText)
 
         self.total_pages_ = 0
         self.cur_page_ = 0
         self.num_page_ = int(_default_pagenum)
-
-    @pyqtSlot(int)
-    @except_check
-    def _update_progress(self, progress):
-        if self.progressdlg.is_open():
-            self.progressdlg.setValue(progress)
-
-    @pyqtSlot(str)
-    @except_check
-    def _update_label(self, txt):
-        if self.progressdlg.is_open():
-            self.progressdlg.setLabelText(txt)
 
     @coroutine(is_block=True)
     def _query_members(self):
@@ -103,13 +99,25 @@ class MemberManageView(QWidget, Ui_MemberManageView):
             finally:
                 self.progressdlg.close()
 
+    @coroutine(is_block=True)
+    def _del_member(self, member):
+        self.progressdlg.open()
+        try:
+            vfiles = yield AsyncTask(self.vif_svc.get_member_files, member)
+            if vfiles:
+                yield AsyncTask(self.vif_svc.delete_files, vfiles)
+            yield AsyncTask(self.svc.del_member, member)
+        finally:
+            self.progressdlg.close()
+
     @pyqtSlot(QModelIndex, QModelIndex)
     @except_check
     def on_table_change(self, current, previous):
         if current.isValid():
             self.modifyButton.setEnabled(True)
             self.videoButton.setEnabled(True)
-            self.delButton.setEnabled(True)
+            # only allow admin to delete member
+            self.delButton.setEnabled(DBManager().cur_user.is_admin())
             self.printButton.setEnabled(True)
         else:
             self.modifyButton.setEnabled(False)
@@ -157,9 +165,12 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     def on_delButton_clicked(self):
         index = self._selectmodel.currentIndex()
         member = self._membersmodel.get_model(index.row())
-        r = QMessageBox.question(self, 'Warning', f'Are you sure to delete {member.name} [{member.cname}] ?')
+        r = QMessageBox.question(
+            self,
+            'Warning',
+            f'Are you sure to delete {member.name} [{member.cname}]?\nAll media files will be delete too!')
         if r == QMessageBox.Yes:
-            self.svc.del_member(member)
+            self._del_member(member)
             self._membersmodel.remove_model(index.row())
 
     @pyqtSlot()

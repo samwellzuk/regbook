@@ -50,14 +50,15 @@ def extract_exif(fname: str) -> Tuple[str, Optional[bytes]]:
         freport.seek(0)
         sinfo = freport.read().decode(encoding='UTF8', errors='ignore')
         sreport, has_thumbnail = _filiter_exif(sinfo)
-        if not has_thumbnail:
-            return sreport, None
-        # get thumbnail
-        fthumbnail = tempfile.TemporaryFile(dir=tmp_dir)
-        _run_exif([exiftool_exe, '-b', '-ThumbnailImage', fname], fthumbnail)
-        fthumbnail.seek(0)
-        img = fthumbnail.read()
-        return sreport, img if img else None
+        return sreport, None
+        # if not has_thumbnail:
+        #     return sreport, None
+        # # get thumbnail
+        # fthumbnail = tempfile.TemporaryFile(dir=tmp_dir)
+        # _run_exif([exiftool_exe, '-b', '-ThumbnailImage', fname], fthumbnail)
+        # fthumbnail.seek(0)
+        # img = fthumbnail.read()
+        # return sreport, img if img else None
     finally:
         if fthumbnail:
             fthumbnail.close()

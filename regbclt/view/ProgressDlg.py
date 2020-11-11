@@ -3,8 +3,9 @@
 """
 Module implementing ChangePwdDlg.
 """
-from typing import NoReturn
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
+
 
 from .ui_ProgressDlg import Ui_ProgressDlg
 
@@ -24,11 +25,15 @@ class ProgressDlg(QDialog, Ui_ProgressDlg):
         super(ProgressDlg, self).__init__(parent)
         self.setupUi(self)
 
+    @pyqtSlot(str)
     def setLabelText(self, txt):
-        self.progressTxt.setText(txt)
+        if not super(ProgressDlg, self).isHidden():
+            self.progressTxt.setText(txt)
 
+    @pyqtSlot(int)
     def setValue(self, progress):
-        self.progressBar.setValue(progress)
+        if not super(ProgressDlg, self).isHidden():
+            self.progressBar.setValue(progress)
 
     def open(self):
         super().open()
@@ -37,9 +42,6 @@ class ProgressDlg(QDialog, Ui_ProgressDlg):
     def close(self) -> bool:
         super().hide()
         return True
-
-    def is_open(self):
-        return not super(ProgressDlg, self).isHidden()
 
     def exec(self) -> int:
         raise NotImplemented('exec')

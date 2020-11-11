@@ -12,6 +12,7 @@ from data.dbmgr import DBManager
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
 
+from .ProgressDlg import ProgressDlg
 from .ui_LoginDlg import Ui_LoginDlg
 
 
@@ -29,6 +30,7 @@ class LoginDlg(QDialog, Ui_LoginDlg):
         """
         super(LoginDlg, self).__init__(parent)
         self.setupUi(self)
+        self.progressdlg = ProgressDlg(parent=self)
         self.username.setFocus()
 
     @except_check
@@ -45,38 +47,32 @@ class LoginDlg(QDialog, Ui_LoginDlg):
         suser = self.username.text()
         spwd = self.password.text()
 
-        progressdlg = QProgressDialog(parent=self)
-        progressdlg.setWindowModality(Qt.WindowModal)
-        progressdlg.setAutoClose(False)
-        progressdlg.setAutoReset(False)
-        progressdlg.setCancelButton(None)
-        progressdlg.show()
-        progressdlg.setValue(10)
+        self.progressdlg.open()
         try:
-            progressdlg.setLabelText(f'checking domain[{sip}] ...')
-            progressdlg.setValue(30)
+            self.progressdlg.setLabelText(f'checking domain[{sip}] ...')
+            self.progressdlg.setValue(30)
 
             yield AsyncTask(socket.gethostbyname, sip)
 
-            progressdlg.setLabelText(f'connecting server[{sip}] ...')
-            progressdlg.setValue(60)
+            self.progressdlg.setLabelText(f'connecting server[{sip}] ...')
+            self.progressdlg.setValue(60)
             mgr = DBManager()
 
             rt = yield AsyncTask(mgr.auth, suser, spwd, sip)
-            progressdlg.setValue(100)
+            self.progressdlg.setValue(100)
             if not rt:
                 raise RuntimeError('User name or password wrong, please retry!')
-            progressdlg.done(0)
+            self.progressdlg.close()
             super().accept()
 
         except socket.gaierror:
             QMessageBox.warning(self, 'Warning', f"Can't Find Domain[{sip}] , please input again!")
+            self.progressdlg.close()
             self.server.setText('')
             self.server.setFocus()
-            progressdlg.done(0)
         except Exception as e:
             QMessageBox.warning(self, 'Warning', str(e))
-            progressdlg.done(0)
+            self.progressdlg.close()
 
     @pyqtSlot(str)
     def on_server_textChanged(self, p0):

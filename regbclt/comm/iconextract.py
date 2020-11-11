@@ -1,8 +1,6 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
 from typing import List, Optional, NoReturn
-from collections.abc import Sequence
-
 import struct
 import pefile
 

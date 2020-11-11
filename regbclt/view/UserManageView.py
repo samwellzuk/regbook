@@ -42,20 +42,8 @@ class UserManageView(QWidget, Ui_UserManageView):
 
         self.svc = UserService()
         self.progressdlg = ProgressDlg(parent=self)
-        self.svc.progressUpdated.connect(self._update_progress)
-        self.svc.progressTxtChanged.connect(self._update_label)
-
-    @pyqtSlot(int)
-    @except_check
-    def _update_progress(self, progress):
-        if self.progressdlg.is_open():
-            self.progressdlg.setValue(progress)
-
-    @pyqtSlot(str)
-    @except_check
-    def _update_label(self, txt):
-        if self.progressdlg.is_open():
-            self.progressdlg.setLabelText(txt)
+        self.svc.progressUpdated.connect(self.progressdlg.setValue)
+        self.svc.progressTxtChanged.connect(self.progressdlg.setLabelText)
 
     @coroutine(is_block=True)
     def _refresh_users(self):

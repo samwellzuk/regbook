@@ -70,12 +70,14 @@ class VirFile:
     _id: Optional[ObjectId] = None
     metadata: InitVar[Dict] = None  # init var, to make exif thumbnail
     owner_id: Optional[ObjectId] = field(init=False)
+    upload_user: Optional[str] = field(init=False)
     md5: Optional[str] = field(init=False)
     exif: Optional[str] = field(init=False)
     thumbnail: Optional[bytes] = field(init=False)
 
     def __post_init__(self, metadata):
         self.owner_id = metadata['owner_id'] if 'owner_id' in metadata else None
+        self.upload_user = metadata['upload_user'] if 'upload_user' in metadata else None
         self.md5 = metadata['md5'] if 'md5' in metadata else None
         self.exif = metadata['exif'] if 'exif' in metadata else None
         self.thumbnail = metadata['thumbnail'] if 'thumbnail' in metadata else None
@@ -83,7 +85,7 @@ class VirFile:
     def to_dict(self):
         di = asdict(self)
         di['metadata'] = {}
-        keys = ['owner_id', 'md5', 'exif', 'thumbnail']
+        keys = ['owner_id', 'upload_user', 'md5', 'exif', 'thumbnail']
         for key in keys:
             if key in di:
                 val = di[key]
