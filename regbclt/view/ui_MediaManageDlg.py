@@ -37,7 +37,6 @@ class Ui_MediaManagDlg(object):
         self.listView = QtWidgets.QListView(self.ownerGbox)
         self.listView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.listView.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.listView.setMovement(QtWidgets.QListView.Snap)
         self.listView.setResizeMode(QtWidgets.QListView.Adjust)
         self.listView.setViewMode(QtWidgets.QListView.IconMode)
         self.listView.setWordWrap(True)

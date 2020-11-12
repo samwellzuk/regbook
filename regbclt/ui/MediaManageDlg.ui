@@ -44,9 +44,6 @@
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
-         <property name="movement">
-          <enum>QListView::Snap</enum>
-         </property>
          <property name="resizeMode">
           <enum>QListView::Adjust</enum>
          </property>

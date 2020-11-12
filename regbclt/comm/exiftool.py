@@ -14,6 +14,7 @@ def _filiter_exif(sinfo: str) -> Tuple[str, bool]:
         'File Name',
         'Directory',
         'Warning',
+        'Error',
         '<!--',
     ]
     reports = []
@@ -42,25 +43,27 @@ def _run_exif(cmds, fout):
 def extract_exif(fname: str) -> Tuple[str, Optional[bytes]]:
     if not os.path.isfile(fname):
         raise RuntimeError(f'File dont exist: {fname}')
-    freport, fthumbnail = None, None
-    try:
-        # get report
-        freport = tempfile.TemporaryFile(dir=tmp_dir)
-        _run_exif([exiftool_exe, '-h', '-charset', 'UTF8', fname], freport)
+
+    img = None
+    with tempfile.TemporaryFile(dir=tmp_dir) as freport, tempfile.TemporaryFile(dir=tmp_dir) as ferr:
+        result = subprocess.run([exiftool_exe, '-h', '-charset', 'UTF8', fname],
+                                stdout=freport, stderr=ferr, timeout=100)
         freport.seek(0)
         sinfo = freport.read().decode(encoding='UTF8', errors='ignore')
         sreport, has_thumbnail = _filiter_exif(sinfo)
-        return sreport, None
-        # if not has_thumbnail:
-        #     return sreport, None
-        # # get thumbnail
-        # fthumbnail = tempfile.TemporaryFile(dir=tmp_dir)
-        # _run_exif([exiftool_exe, '-b', '-ThumbnailImage', fname], fthumbnail)
-        # fthumbnail.seek(0)
-        # img = fthumbnail.read()
-        # return sreport, img if img else None
-    finally:
-        if fthumbnail:
-            fthumbnail.close()
-        if freport:
-            freport.close()
+        if not sreport and result.returncode != 0:
+            ferr.seek(0)
+            serr = ferr.read().decode(encoding='UTF8', errors='ignore')
+            raise RuntimeError(f'Exif report return: {result.returncode}\nOutput: {serr}')
+    # if has_thumbnail:
+    #     ferr.seek(0)
+    #     with tempfile.TemporaryFile(dir=tmp_dir) as fthumbnail:
+    #         result = subprocess.run([exiftool_exe, '-b', '-ThumbnailImage', fname],
+    #                                 stdout=fthumbnail, stderr=ferr, timeout=100)
+    #         fthumbnail.seek(0)
+    #         img = fthumbnail.read()
+    #         if not sreport and result.returncode != 0:
+    #             ferr.seek(0)
+    #             serr = ferr.read().decode(encoding='UTF8', errors='ignore')
+    #             raise RuntimeError(f'Exif thumbnail return: {result.returncode}\nOutput: {serr}')
+    return sreport, img
