@@ -92,3 +92,10 @@ class VirFile:
                 di.pop(key)
                 di['metadata'][key] = val
         return di
+
+    def file_postfix(self):
+        parts = self.filename.split('.')
+        if len(parts) < 2 or not parts[0]:  # file name like : .ignored
+            return None
+        postfix = parts[-1].lower()
+        return f'.{postfix}' if postfix else None

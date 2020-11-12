@@ -168,11 +168,11 @@ def test():
 
 def main():
     app = QApplication(sys.argv)
-    dlg = TestDlg()
-    dlg.exec()
-    # data = extract('C:\Windows\SystemResources\imageres.dll.mun', 2)
-    # with open('imageres.ico', 'wb') as of:
-    #     of.write(data)
+    # dlg = TestDlg()
+    # dlg.exec()
+    data = extract('C:\Windows\SystemResources\imageres.dll.mun', 2, 128)
+    with open('imageres.ico', 'wb') as of:
+        of.write(data)
     fileName, _ = QFileDialog.getOpenFileName(None, "Open Image", "", "Image Files (*.png *.jpg *.bmp *.ico)")
     pixmap = QPixmap(fileName)
     label = QLabel()
@@ -180,6 +180,19 @@ def main():
     label.show()
     return app.exec()
 
+def exico():
+    import settings
+    from comm import fileicon
+    # check file
+    settings.initialize()
+    fileicon.initialize()
+    try:
+        data = fileicon.query_file_icon('.xls')
+        with open('test.ico','wb') as of:
+            of.write(data)
+    finally:
+        fileicon.uninialize()
+
 
 if __name__ == '__main__':
-    main()
+    exico()

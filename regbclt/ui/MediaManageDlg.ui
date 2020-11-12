@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1250</width>
-    <height>600</height>
+    <width>1150</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,17 +50,11 @@
          <property name="resizeMode">
           <enum>QListView::Adjust</enum>
          </property>
-         <property name="spacing">
-          <number>3</number>
-         </property>
-         <property name="gridSize">
-          <size>
-           <width>200</width>
-           <height>200</height>
-          </size>
-         </property>
          <property name="viewMode">
           <enum>QListView::IconMode</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -91,6 +85,44 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Rotate Thumbnail:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rorateLeft">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resouce.qrc">
+         <normaloff>:/images/roratel.svg</normaloff>:/images/roratel.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rorateRight">
+       <property name="icon">
+        <iconset resource="../resouce.qrc">
+         <normaloff>:/images/rorater.svg</normaloff>:/images/rorater.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -104,6 +136,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="refreshButton">
        <property name="text">
         <string>Refresh(&amp;R)</string>
@@ -114,6 +153,20 @@
       <widget class="QPushButton" name="previewButton">
        <property name="text">
         <string>Preview(&amp;P)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteButton">
+       <property name="text">
+        <string>Delete(&amp;E)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -132,13 +185,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteButton">
-       <property name="text">
-        <string>Delete(&amp;E)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="exitButton">
        <property name="text">
         <string>Exit(&amp;X)</string>
@@ -152,7 +198,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resouce.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>exitButton</sender>

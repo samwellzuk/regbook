@@ -1,13 +1,29 @@
 # -*- coding: utf-8 -*-
 import copy
-from PyQt5.QtCore import QAbstractListModel, QModelIndex, QVariant, Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QAbstractListModel, QModelIndex, QVariant, Qt, QSize, QRect
+from PyQt5.QtGui import QPixmap, QPainter
 
 from comm.utility import except_check
-from comm.fileicon import query_file_icon
+from comm.fileicon import query_file_icon, best_thumbnail_width
 
-_filename_max = 12
+_role_dict = {
+    0: 'DisplayRole',
+    1: 'DecorationRole',
+    2: 'EditRole',
+    3: 'ToolTipRole',
+    4: 'StatusTipRole',
+    5: 'WhatsThisRole',
+    13: 'SizeHintRole',
+    6: 'FontRole',
+    7: 'TextAlignmentRole',
+    8: 'BackgroundRole',
+    9: 'ForegroundRole',
+    10: 'CheckStateRole',
+    14: 'InitialSortOrderRole',
+    11: 'AccessibleTextRole',
+    12: 'AccessibleDescriptionRole',
+    256: 'UserRole',
+}
 
 
 class VirFileModel(QAbstractListModel):
@@ -15,6 +31,39 @@ class VirFileModel(QAbstractListModel):
     def __init__(self):
         super(VirFileModel, self).__init__()
         self._models = []
+        self._pixmaps = []
+
+    def _get_pixmap(self, m):
+        if m.thumbnail:
+            pixmap = QPixmap()
+            pixmap.loadFromData(m.thumbnail)
+            return pixmap
+        if postfix := m.file_postfix():
+            if imgbytes := query_file_icon(postfix):
+                pixmap = QPixmap()
+                pixmap.loadFromData(imgbytes)
+                return pixmap
+        return QPixmap(":/images/default.ico")
+
+    def _get_best_pixmap(self, pixmap):
+        # pixmap need scale
+        if pixmap.height() > best_thumbnail_width or pixmap.width() > best_thumbnail_width:
+            pixmap = pixmap.scaled(best_thumbnail_width, best_thumbnail_width,
+                                   Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # align pixmap to bottom
+        if pixmap.height() < best_thumbnail_width:
+            dstimg = QPixmap(best_thumbnail_width, best_thumbnail_width)
+            dstimg.fill(Qt.transparent)
+            painter = QPainter()
+            if painter.begin(dstimg):
+                x = int((best_thumbnail_width - pixmap.width())/2)
+                y = int(best_thumbnail_width - pixmap.height())
+                dstrect = QRect(x, y, pixmap.width(), pixmap.height())
+                srcrect = QRect(0, 0, pixmap.width(), pixmap.height())
+                painter.drawPixmap(dstrect, pixmap, srcrect)
+                painter.end()
+                pixmap = dstimg
+        return pixmap
 
     @except_check
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -41,20 +90,15 @@ class VirFileModel(QAbstractListModel):
             return QVariant()
         row = index.row()
         m = self._models[row]
-        if role == Qt.DisplayRole:
-            return f'{m.filename[:_filename_max - 3]}...' if len(m.filename) > _filename_max else m.filename
+        if role == Qt.SizeHintRole:
+            # 10 margin, 60 for 3 line text
+            return QSize(best_thumbnail_width + 10, best_thumbnail_width + 10 + 60)
+        elif role == Qt.TextAlignmentRole:
+            return Qt.AlignCenter
+        elif role == Qt.DisplayRole:
+            return m.filename
         elif role == Qt.DecorationRole:
-            if m.thumbnail:
-                bmp = QPixmap()
-                bmp.loadFromData(m.thumbnail)
-                return bmp
-            postfix = m.filename.split('.')[-1]
-            imgbytes = query_file_icon(f'.{postfix.lower()}')
-            if imgbytes:
-                bmp = QPixmap()
-                bmp.loadFromData(imgbytes)
-                return bmp
-            return QPixmap(":/images/default.ico")
+            return self._pixmaps[row]
         elif role == Qt.ToolTipRole:
             tooltip = [
                 f'name: {m.filename}',
@@ -64,17 +108,21 @@ class VirFileModel(QAbstractListModel):
                 f'md5 code: {m.md5}'
             ]
             return '\n'.join(tooltip)
-        return QVariant()
+        else:
+            return QVariant()
 
     def add_model(self, m, pos=0):
+        img = self._get_best_pixmap(self._get_pixmap(m))
         self.beginInsertRows(QModelIndex(), pos, pos)
         self._models.insert(pos, m)
+        self._pixmaps.insert(pos, img)
         self.endInsertRows()
 
     def get_model(self, row):
         return self._models[row]
 
     def update_model(self, row, m):
+        self._pixmaps[row] = self._get_best_pixmap(self._get_pixmap(m))
         self._models[row] = m
         left = self.index(row, 0)
         rigth = self.index(row, 1)
@@ -83,9 +131,11 @@ class VirFileModel(QAbstractListModel):
     def remove_model(self, row):
         self.beginRemoveRows(QModelIndex(), row, row)
         del self._models[row]
+        del self._pixmaps[row]
         self.endRemoveRows()
 
     def reset_models(self, mlist=None):
         self.beginResetModel()
         self._models = [] if mlist is None else mlist
+        self._pixmaps = [self._get_best_pixmap(self._get_pixmap(m)) for m in mlist]
         self.endResetModel()

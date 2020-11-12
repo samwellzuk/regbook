@@ -9,14 +9,14 @@ from PyQt5.QtCore import QObject, pyqtSignal, QIODevice, QByteArray, QBuffer, Qt
 from PyQt5.QtGui import QImage
 
 import gridfs
+import pymongo
 
 from .model import VirFile, Member
 from .dbmgr import DBManager
 from comm.exiftool import extract_exif
-from settings import qt_image_formats
+from comm.fileicon import best_thumbnail_width, query_file_icon
 
-_thumbnail_width = 256
-_thumbnail_highet = 256
+from settings import qt_image_formats
 
 
 class VirFileService(QObject):
@@ -80,12 +80,12 @@ class VirFileService(QObject):
                 _, postfix = os.path.splitext(vf.filename)
                 if vf.thumbnail is None and postfix.lower() in qt_image_formats:
                     img = QImage(vf.filename)
-                    resimg = img.scaled(_thumbnail_width, _thumbnail_highet,
+                    resimg = img.scaled(best_thumbnail_width, best_thumbnail_width,
                                         Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     resarr = QByteArray()
                     resbuf = QBuffer(resarr)
                     resbuf.open(QIODevice.WriteOnly)
-                    resimg.save(resbuf, "JPG")
+                    resimg.save(resbuf, "PNG")  # thumbnail save to png for keeping transparent color
                     vf.thumbnail = resarr.data()
                 vfiles.append(vf)
             except Exception as e:
@@ -111,7 +111,7 @@ class VirFileService(QObject):
             self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vftmps)))
         # 5 uploading files to mongodb, get VirFile
         progress += step_total
-        step_total = 60
+        step_total = 50
         self.progressUpdated.emit(progress)
         self.progressTxtChanged.emit('Step[5]: Uploading files...')
         vftmps = vfiles
@@ -159,6 +159,22 @@ class VirFileService(QObject):
                 self.progressErrChanged.emit(f'Step[5]({vf.filename}): {e}')
             self.progressStepUpdated.emit(100)
             self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vftmps)))
+        # 6 getting icon by file extension
+        progress += step_total
+        step_total = 10
+        self.progressUpdated.emit(progress)
+        self.progressTxtChanged.emit('Step[6]: Getting icon by file extension...')
+        self.progressStepUpdated.emit(0)
+        for i, vf in enumerate(vfiles):
+            self.progressStepTxtChanged.emit(f'{vf.filename}')
+            try:
+                if not vf.thumbnail:
+                    if postfix := vf.file_postfix():
+                        query_file_icon(postfix)
+            except Exception as e:
+                self.progressErrChanged.emit(f'Step[6]({vf.filename}): {e}')
+            self.progressStepUpdated.emit(int(100 * (i + 1) / len(vfiles)))
+            self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vfiles)))
         # finished
         progress += step_total
         self.progressUpdated.emit(progress)
@@ -223,36 +239,64 @@ class VirFileService(QObject):
         return
 
     def get_member_files(self, member: Member) -> List[VirFile]:
-        self.progressUpdated.emit(0)
-        self.progressTxtChanged.emit('Querying files...')
         vfiles = []
-        dbfs = gridfs.GridFS(DBManager().get_db(), disable_md5=True)
+        # 1 checking existence of files
+        progress = 0
+        step_total = 50
+        self.progressUpdated.emit(progress)
+        self.progressTxtChanged.emit('Step[1]: Querying files...')
+        self.progressStepUpdated.emit(0)
         try:
-            progress = 0
-            for outf in dbfs.find({"metadata.owner_id": member._id},
-                                  no_cursor_timeout=True).sort("uploadDate", -1):
-                vf = VirFile(
-                    filename=outf.filename,
-                    length=outf.length,
-                    chunkSize=outf.chunk_size,
-                    uploadDate=outf.upload_date,
-                    _id=outf._id,
-                    metadata=outf.metadata
-                )
+            coll = DBManager().get_db().get_collection('fs.files')
+            total = coll.count_documents({"metadata.owner_id": member._id})
+            index = 0
+            for outf in coll.find({"metadata.owner_id": member._id},sort=[('uploadDate', pymongo.DESCENDING)]):
+                vf = VirFile(**outf)
                 vfiles.append(vf)
-                progress = progress + 1 if progress <= 10 else 1
-                self.progressUpdated.emit(progress * 10)
+                self.progressStepUpdated.emit(int(100 * (index + 1) / total))
+                self.progressUpdated.emit(progress + int(step_total * (index + 1) / total))
+                index += 1
         except Exception as e:
-            self.progressErrChanged.emit(f'Query: {e}')
-        self.progressUpdated.emit(100)
+            self.progressErrChanged.emit(f'Step[1] Query: {e}')
+        # 2 getting icon by file extension
+        progress += step_total
+        step_total = 50
+        self.progressUpdated.emit(progress)
+        self.progressTxtChanged.emit('Step[2]: Getting icon by file extension...')
+        self.progressStepUpdated.emit(0)
+        for i, vf in enumerate(vfiles):
+            self.progressStepTxtChanged.emit(f'{vf.filename}')
+            try:
+                if not vf.thumbnail:
+                    if postfix := vf.file_postfix():
+                        query_file_icon(postfix)
+            except Exception as e:
+                self.progressErrChanged.emit(f'Step[2]({vf.filename}): {e}')
+            self.progressStepUpdated.emit(int(100 * (i + 1) / len(vfiles)))
+            self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vfiles)))
+        # finished
+        progress += step_total
+        self.progressUpdated.emit(progress)
         self.progressTxtChanged.emit('Finished')
         return vfiles
 
-    def open_file(self, vfile: VirFile) -> gridfs.GridOut:
+    def open_file_content(self, vfile: VirFile) -> gridfs.GridOut:
         self.progressUpdated.emit(0)
-        self.progressTxtChanged.emit('Querying files...')
+        self.progressTxtChanged.emit('Querying file content...')
         dbfs = gridfs.GridFS(DBManager().get_db(), disable_md5=True)
         outf = dbfs.get(vfile._id)
         self.progressUpdated.emit(100)
         self.progressTxtChanged.emit('Finished')
         return outf
+
+    def update_file_thumbnail(self, vfile: VirFile, thumbnail: bytes) -> VirFile:
+        self.progressUpdated.emit(0)
+        self.progressTxtChanged.emit('Updating file thumbnail...')
+        coll = DBManager().get_db().get_collection('fs.files')
+        result = coll.update_one({'_id': vfile._id}, {'$set': {'metadata.thumbnail': thumbnail}})
+        if result.modified_count != 1:
+            raise RuntimeError(f'Update Error: modified_count {result.modified_count}')
+        vfile.thumbnail = thumbnail
+        self.progressUpdated.emit(100)
+        self.progressTxtChanged.emit('Finished')
+        return vfile

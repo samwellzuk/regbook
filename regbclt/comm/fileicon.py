@@ -28,46 +28,66 @@ def uninialize() -> NoReturn:
         _icons_db = None
 
 
-def _parse_iconval(iconval: str, bestwidth: Optional[int] = None) -> Optional[bytes]:
-    parts = iconval.replace('"', '').split(',')
-    file = parts[0]
-    if not file.startswith('@'):
-        filepath = pathlib.Path(os.path.expandvars(file))
-        if filepath.is_file():
-            suffix = filepath.suffix.lower()
-            if suffix in ['.exe', '.dll']:
-                index = int(parts[1]) if len(parts) > 1 else 0
-                return extract(str(filepath), index, bestwidth)
-            elif suffix in settings.qt_image_formats:
+_iconval_cache = {}
+
+
+def _parse_iconval(postfix: str, iconval: str, bestwidth: Optional[int] = None) -> Optional[bytes]:
+    if iconval in _iconval_cache:
+        return _iconval_cache[iconval]
+    imgbin = None
+    try:
+        parts = iconval.replace('"', '').split(',')
+        file = parts[0]
+        if not file.startswith('@'):
+            filepath = pathlib.Path(os.path.expandvars(file))
+            if filepath.is_file():
                 with filepath.open('rb') as of:
-                    return of.read()
-    return None
+                    pehead = of.read(2)
+                # check is pe file
+                if pehead[0] == 0x4D and pehead[1] == 0x5A:
+                    index = int(parts[1]) if len(parts) > 1 else 0
+                    imgbin = extract(str(filepath), index, bestwidth)
+                else:
+                    suffix = filepath.suffix.lower()
+                    if suffix in settings.qt_image_formats:
+                        with filepath.open('rb') as of:
+                            imgbin = of.read()
+    finally:
+        _iconval_cache[iconval] = imgbin
+    return imgbin
+
+
+def _get_reg(path, valname=''):
+    hk = None
+    try:
+        hk = win32api.RegOpenKeyEx(win32con.HKEY_CLASSES_ROOT, path)
+        # t == 1 REG_SZ
+        # t == 2 REG_EXPAND_SZ
+        val, t = win32api.RegQueryValueEx(hk, valname)
+        return val
+    except pywintypes.error:
+        return None
+    finally:
+        if hk:
+            win32api.RegCloseKey(hk)
 
 
 def _get_icon(postfix: str, best_width: Optional[int] = None) -> Optional[bytes]:
+    iconval = None
     try:
-        appid = win32api.RegQueryValue(win32con.HKEY_CLASSES_ROOT, postfix)
-        # hk = win32api.RegOpenKeyEx(win32con.HKEY_CLASSES_ROOT, postfix)
-        # try:
-        #     val, _ = win32api.RegQueryValueEx(hk, 'PerceivedType')
-        #     perceivetype = val.lower()
-        # except pywintypes.error as e:
-        #     pass
-        # win32api.RegCloseKey(hk)
-        iconval = None
-        try:
-            iconval = win32api.RegQueryValue(win32con.HKEY_CLASSES_ROOT, f'{postfix}\\DefaultIcon')
-        except pywintypes.error as e:
-            try:
-                iconval = win32api.RegQueryValue(win32con.HKEY_CLASSES_ROOT, f'{appid}\\DefaultIcon')
-            except pywintypes.error as e:
-                pass
-        if iconval:
-            img = _parse_iconval(iconval, best_width)
-            return img
+        appid = _get_reg(postfix)
+        # perceivetype = _get_reg(postfix,'PerceivedType')
+        iconval = _get_reg(f'{postfix}\\DefaultIcon')
+        if not iconval and appid:
+            iconval = _get_reg(f'{appid}\\DefaultIcon')
+            if iconval:
+                return _parse_iconval(postfix, iconval, best_width)
     except Exception as e:
-        pass
+        print(f"Parse Error[{postfix}] : {iconval} :", e)
     return None
+
+
+best_thumbnail_width = 128
 
 
 def query_file_icon(postfix: str) -> Optional[bytes]:
@@ -77,7 +97,7 @@ def query_file_icon(postfix: str) -> Optional[bytes]:
     if postfix in _icons_db:
         img = _icons_db[postfix]
         return img if img else None
-    img = _get_icon(postfix)
+    img = _get_icon(postfix, best_thumbnail_width)
     _icons_db[postfix] = img if img else ''
     _icons_db.sync()
     return img

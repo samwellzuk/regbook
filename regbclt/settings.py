@@ -21,6 +21,8 @@ import xml.etree.ElementTree as ET
 #     sys.executable               D:\ChruchProjects\regbook\venv\Scripts\python.exe
 #     os.getcwd()                  D:\ChruchProjects\regbook\regbsvr
 
+preview_max_filesz = 5 * 1024 * 1024
+
 _file_exist_list = []
 root_dir = os.path.normpath(os.getcwd())
 if not os.path.isfile(os.path.join(root_dir, "conf", "settings.yml")):
