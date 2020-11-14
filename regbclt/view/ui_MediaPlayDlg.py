@@ -48,6 +48,8 @@ class Ui_MediaPlayDlg(object):
         self.positionSlider = QtWidgets.QSlider(MediaPlayDlg)
         self.positionSlider.setMinimum(1)
         self.positionSlider.setMaximum(1000)
+        self.positionSlider.setSingleStep(10)
+        self.positionSlider.setPageStep(100)
         self.positionSlider.setTracking(False)
         self.positionSlider.setOrientation(QtCore.Qt.Horizontal)
         self.positionSlider.setObjectName("positionSlider")

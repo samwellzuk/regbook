@@ -45,6 +45,8 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
         self.setupUi(self)
         self.member = member
 
+        self._preview_dlglist = []
+
         self._vfmodel = VirFileModel()
         self.listView.setModel(self._vfmodel)
 
@@ -249,8 +251,9 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
     def _do_preview(self, vf):
         pty = self._get_preview_type(vf)
         if pty == PreviewType.VlcPreview:
-            dlg = MediaPlayDlg(vf)
-            dlg.exec()
+            dlg = MediaPlayDlg(vf, parent=self)
+            dlg.show()
+            self._preview_dlglist.append(dlg)
         elif pty == PreviewType.OpenPreview:
             dpath = os.path.join(tmp_dir, str(vf._id))
             os.makedirs(dpath, exist_ok=True)
@@ -258,6 +261,13 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
             if not os.path.isfile(fpath):
                 self._download_files([vf], dpath)
             webbrowser.open(fpath)
+
+    def done(self, a0: int) -> None:
+        super(MediaManageDlg, self).done(a0)
+        for dlg in self._preview_dlglist:
+            if not dlg.isHidden():
+                dlg.close()
+        self._preview_dlglist.clear()
 
     @pyqtSlot()
     @except_check

@@ -80,4 +80,4 @@ def initialize():
     for f in _file_exist_list:
         if not os.path.isfile(f):
             raise RuntimeError(f'File not exist: {f}')
-    logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)

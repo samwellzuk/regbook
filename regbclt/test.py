@@ -183,6 +183,7 @@ def main():
     label.show()
     return app.exec()
 
+
 def exico():
     import settings
     from comm import fileicon
@@ -191,10 +192,11 @@ def exico():
     fileicon.initialize()
     try:
         data = fileicon.query_file_icon('.xls')
-        with open('test.ico','wb') as of:
+        with open('test.ico', 'wb') as of:
             of.write(data)
     finally:
         fileicon.uninialize()
+
 
 def exmv():
     import sys
@@ -204,11 +206,18 @@ def exmv():
     img = ex.take_snapshot(r'E:\mv\[66影视www.66ys.cn]哈利波特2之消失的密室DVD国语配音高清收藏版.rmvb')
     if img:
         print('ok')
-        with open('test.png','wb') as of:
+        with open('test.png', 'wb') as of:
             of.write(img)
     else:
         print('failed')
 
 
+from view.MediaPlayWnd import MediaPlayWnd
+from data.model import VirFile
+
 if __name__ == '__main__':
-    exmv()
+    app = QApplication(sys.argv)
+    vf = VirFile(filename='test.mov', length=100, chunkSize=100, uploadDate=None, metadata={})
+    wnd = MediaPlayWnd(vf)
+    wnd.show()
+    app.exec()

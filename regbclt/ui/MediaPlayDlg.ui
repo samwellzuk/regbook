@@ -88,6 +88,12 @@
        <property name="maximum">
         <number>1000</number>
        </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="pageStep">
+        <number>100</number>
+       </property>
        <property name="tracking">
         <bool>false</bool>
        </property>

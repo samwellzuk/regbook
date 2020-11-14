@@ -9,7 +9,7 @@ import datetime
 from enum import Enum
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer, QObject
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QPalette, QColor
+from PyQt5.QtGui import QCloseEvent
 
 import vlc
 from comm.utility import except_check
@@ -176,7 +176,7 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
         """
         super(MediaPlayDlg, self).__init__(parent)
         self.setupUi(self)
-
+        self.vfile = vfile
         # creating a basic vlc instance
         self.instance = vlc.Instance()
         # creating an empty vlc media player
@@ -198,13 +198,32 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
         self.evtracker.MediaPlayerUnmuted.connect(self.unmuted_change)
 
         self.meida_pausable = True
-        self.open_video(vfile)
+        self.setWindowTitle(f'{vfile.filename} - Vlc Media Player')
+        self.open_video()
 
-    def open_video(self, vf):
-        self.setWindowTitle(f'{vf.filename} - Vlc Media Player')
+    def open_video(self):
         media = self.mediaplayer.set_mrl(r'C:\Users\atten\Desktop\Photo\103APPLE\IMG_3606.MOV')
         media.release()
         self.mediaplayer.play()
+
+    def _do_clear(self):
+        if self.mediaplayer:
+            if self.mediaplayer.is_playing():
+                self.mediaplayer.stop()
+                while self.mediaplayer.is_playing():
+                    time.sleep(0.1)
+            self.evtracker.unregister(self.mediaplayer)
+            self.mediaplayer.release()
+            self.evtracker = None
+            self.mediaplayer = None
+
+    def done(self, a0: int) -> None:
+        super(MediaPlayDlg, self).done(a0)
+        self._do_clear()
+
+    def closeEvent(self, a0: QCloseEvent) -> None:
+        super(MediaPlayDlg, self).closeEvent(a0)
+        self._do_clear()
 
     @pyqtSlot(MeidaPlayerState)
     @except_check
@@ -309,19 +328,13 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
         else:
             self.positionSlider.setEnabled(False)
 
-    def done(self, a0: int) -> None:
-        super(MediaPlayDlg, self).done(a0)
-        if self.mediaplayer.is_playing():
-            self.mediaplayer.stop()
-            while self.mediaplayer.is_playing():
-                time.sleep(0.1)
-        self.evtracker.unregister(self.mediaplayer)
-        self.mediaplayer.release()
-
     @pyqtSlot()
     @except_check
     def on_playButton_clicked(self):
-        self.mediaplayer.play()
+        if self.mediaplayer.will_play():
+            self.mediaplayer.play()
+        else:
+            self.open_video()
 
     @pyqtSlot()
     @except_check
@@ -341,7 +354,7 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
     @pyqtSlot(int)
     @except_check
     def on_positionSlider_valueChanged(self, position):
-        self.mediaplayer.set_position(position/1000.0)
+        self.mediaplayer.set_position(position / 1000.0)
 
     @pyqtSlot(int)
     @except_check
