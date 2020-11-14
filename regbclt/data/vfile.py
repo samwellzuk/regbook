@@ -27,6 +27,9 @@ class VirFileService(QObject):
     progressStepTxtChanged = pyqtSignal(str)
     progressErrChanged = pyqtSignal(str)
 
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
     def upload_files(self, member: Member, fpathlist: List[str]) -> List[VirFile]:
         assert len(fpathlist) != 0
         vfiles = []

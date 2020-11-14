@@ -1,6 +1,13 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 48 48" width="48">
-	<path d="M-838-2232H562v3600H-838z" fill="none"/>
-	<path d="M16 10v28l22-14z"/>
-	<path d="M0 0h48v48H0z" fill="none"/>
+<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="130" width="130" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1">
+   <path id="svg_2" d="m24.685,118.128c1.453,0.839 3.076,1.259 4.698,1.259c1.622,0 3.244,-0.42 4.698,-1.259l76.199,-43.994c2.907,-1.678 4.698,-4.78 4.698,-8.137c0,-3.356 -1.791,-6.458 -4.698,-8.136l-76.2,-43.994c-1.454,-0.839 -3.075,-1.259 -4.698,-1.259c-1.622,0 -3.244,0.42 -4.698,1.259c-2.907,1.678 -4.698,4.78 -4.698,8.136l0,87.988c0.002,3.357 1.793,6.459 4.699,8.137z" fill="#070405"/>
+  </g>
+ </g>
 </svg>

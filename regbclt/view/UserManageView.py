@@ -40,7 +40,7 @@ class UserManageView(QWidget, Ui_UserManageView):
         self._selectmodel = self.usersView.selectionModel()
         self._selectmodel.currentRowChanged.connect(self.on_table_change)
 
-        self.svc = UserService()
+        self.svc = UserService(parent=self)
         self.progressdlg = ProgressDlg(parent=self)
         self.svc.progressUpdated.connect(self.progressdlg.setValue)
         self.svc.progressTxtChanged.connect(self.progressdlg.setLabelText)

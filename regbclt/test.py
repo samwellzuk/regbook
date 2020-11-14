@@ -26,6 +26,9 @@ from settings import tmp_dir
 class UserService(QObject):
     progressUpdated = pyqtSignal(int)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
     def get_all_user(self):
         for i in range(10):
             self.progressUpdated.emit(i * 10)
@@ -71,7 +74,7 @@ class TestDlg(QDialog, Ui_LoginDlg):
         self.setupUi(self)
 
         self.progressdlg = ProgressDlg(parent=self)
-        self.svc = UserService()
+        self.svc = UserService(parent=self)
         self.svc.progressUpdated.connect(self._update_progress)
 
     @pyqtSlot(int)

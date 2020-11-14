@@ -1,15 +1,14 @@
-<?xml version="1.0"?>
-<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 48 48" width="48"><path d="M12 38h8V10h-8v28zm16-28v28h8V10h-8z"/><path d="M0 0h48v48H0z" fill="none"/>
-	
-	
-	<metadata>
-		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-			<rdf:Description about="https://iconscout.com/legal#licenses" dc:title="Pause, Play, Player, Music, Sound, Line" dc:description="Pause, Play, Player, Music, Sound, Line" dc:publisher="Iconscout" dc:date="2016-12-14" dc:format="image/svg+xml" dc:language="en">
-				<dc:creator>
-					<rdf:Bag>
-						<rdf:li>Google Inc.</rdf:li>
-					</rdf:Bag>
-				</dc:creator>
-			</rdf:Description>
-		</rdf:RDF>
-    </metadata></svg>
+<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="130" width="130" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1">
+   <path id="svg_2" d="m40.413,12.754c-8.289,0 -15.008,6.719 -15.008,15.008l0,76.618c0,8.288 6.719,15.008 15.008,15.008c8.288,0 15.007,-6.719 15.007,-15.008l0,-76.619c0,-8.288 -6.719,-15.007 -15.007,-15.007z" fill="#070405"/>
+   <path id="svg_3" d="m85.435,12.754c-8.288,0 -15.008,6.719 -15.008,15.008l0,76.618c0,8.288 6.719,15.008 15.008,15.008c8.289,0 15.008,-6.719 15.008,-15.008l0,-76.619c0,-8.288 -6.719,-15.007 -15.008,-15.007z" fill="#070405"/>
+  </g>
+ </g>
+</svg>

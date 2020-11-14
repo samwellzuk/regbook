@@ -12,6 +12,9 @@ class UserService(QObject):
     progressUpdated = pyqtSignal(int)
     progressTxtChanged = pyqtSignal(str)
 
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
     def get_all_user(self) -> List[User]:
         self.progressTxtChanged.emit('Query user information ...')
         self.progressUpdated.emit(0)

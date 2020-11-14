@@ -1,6 +1,8 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
 import os
+import sys
+import logging
 import codecs
 import yaml
 
@@ -58,8 +60,8 @@ vlc_libvlc_dll = os.path.join(vlc_dir, 'libvlc.dll')
 vlc_extensions_wxs = os.path.join(vlc_dir, "msi", "extensions.wxs")
 _file_exist_list.append(vlc_libvlc_dll)
 _file_exist_list.append(vlc_extensions_wxs)
-#os.environ["PYTHON_VLC_MODULE_PATH"] = vlc_dir
-#os.environ["PYTHON_VLC_LIB_PATH"] = vlc_libvlc_dll
+os.environ["PYTHON_VLC_MODULE_PATH"] = vlc_dir
+os.environ["PYTHON_VLC_LIB_PATH"] = vlc_libvlc_dll
 vlc_video_formats = set()
 vlc_audio_formats = set()
 if os.path.isfile(vlc_extensions_wxs):
@@ -78,3 +80,4 @@ def initialize():
     for f in _file_exist_list:
         if not os.path.isfile(f):
             raise RuntimeError(f'File not exist: {f}')
+    logging.basicConfig(stream=sys.stderr, level=logging.WARNING)

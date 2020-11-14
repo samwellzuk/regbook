@@ -162,8 +162,9 @@ class AsyncTask(QObject):
     `on_finished` is called when the thread is complete.
 
     """
+
     def __init__(self, func, *args, **kwargs):
-        super(AsyncTask, self).__init__()
+        super().__init__()
         self.result = None  # Used for the result of the thread.
         self.func = func
         self.args = args

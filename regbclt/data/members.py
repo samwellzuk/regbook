@@ -17,6 +17,9 @@ class MemberService(QObject):
     progressUpdated = pyqtSignal(int)
     progressTxtChanged = pyqtSignal(str)
 
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
     def query_members(self, skip: int, limit: int = 0,
                       keyword: Optional[str] = None,
                       sortkey: Optional[str] = None,

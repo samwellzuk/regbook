@@ -52,7 +52,7 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
         self._selectmodel.currentChanged.connect(self.on_current_change)
         self._selectmodel.selectionChanged.connect(self.on_selection_change)
 
-        self.svc = VirFileService()
+        self.svc = VirFileService(parent=self)
         self.progressdlg = ProgressStepDlg(parent=self)
         self.svc.progressUpdated.connect(self.progressdlg.setValue)
         self.svc.progressTxtChanged.connect(self.progressdlg.setLabelText)

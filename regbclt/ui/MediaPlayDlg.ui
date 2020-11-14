@@ -19,7 +19,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="videoFrame">
+    <widget class="QWidget" name="videoWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -66,12 +66,6 @@
      <property name="autoFillBackground">
       <bool>true</bool>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
    <item>
@@ -93,6 +87,9 @@
        </property>
        <property name="maximum">
         <number>1000</number>
+       </property>
+       <property name="tracking">
+        <bool>false</bool>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -127,27 +124,26 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>48</width>
+         <height>48</height>
         </size>
        </property>
        <property name="flat">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="playButton">
        <property name="toolTip">
-        <string>Play/Pause</string>
+        <string>Play</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
         <iconset resource="../resouce.qrc">
-         <normaloff>:/images/play.svg</normaloff>
-         <normalon>:/images/pause.svg</normalon>:/images/play.svg</iconset>
+         <normaloff>:/images/play.svg</normaloff>:/images/play.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -155,11 +151,45 @@
          <height>48</height>
         </size>
        </property>
-       <property name="checkable">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pauseButton">
+       <property name="toolTip">
+        <string>Pause</string>
        </property>
-       <property name="flat">
-        <bool>true</bool>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resouce.qrc">
+         <normaloff>:/images/pause.svg</normaloff>:/images/pause.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopButton">
+       <property name="toolTip">
+        <string>Stop</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resouce.qrc">
+         <normaloff>:/images/stop.svg</normaloff>:/images/stop.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -226,6 +256,12 @@
        <property name="maximum">
         <number>100</number>
        </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+       <property name="tracking">
+        <bool>false</bool>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -275,22 +311,6 @@
     <hint type="destinationlabel">
      <x>389</x>
      <y>201</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>volumeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>volumeLabel</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>604</x>
-     <y>512</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>686</x>
-     <y>513</y>
     </hint>
    </hints>
   </connection>

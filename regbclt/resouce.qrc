@@ -13,6 +13,7 @@
         <file>images/mute.png</file>
         <file>images/play.svg</file>
         <file>images/pause.svg</file>
+        <file>images/stop.svg</file>
         <file>images/power.png</file>
         <file>images/vlc.ico</file>
     </qresource>

@@ -51,12 +51,12 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         self._selectmodel = self.baseView.selectionModel()
         self._selectmodel.currentRowChanged.connect(self.on_table_change)
 
-        self.svc = MemberService()
+        self.svc = MemberService(parent=self)
         self.progressdlg = ProgressDlg(parent=self)
         self.svc.progressUpdated.connect(self.progressdlg.setValue)
         self.svc.progressTxtChanged.connect(self.progressdlg.setLabelText)
 
-        self.vif_svc = VirFileService()
+        self.vif_svc = VirFileService(parent=self)
         self.vif_svc.progressUpdated.connect(self.progressdlg.setValue)
         self.vif_svc.progressTxtChanged.connect(self.progressdlg.setLabelText)
 
