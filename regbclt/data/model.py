@@ -1,5 +1,6 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
+import os
 from dataclasses import dataclass, asdict, field, InitVar
 from uuid import UUID
 from typing import Optional, List, Any, Dict
@@ -93,9 +94,10 @@ class VirFile:
                 di['metadata'][key] = val
         return di
 
-    def file_postfix(self):
-        parts = self.filename.split('.')
+    def file_suffix(self):
+        basename = os.path.basename(self.filename)
+        parts = basename.split('.')
         if len(parts) < 2 or not parts[0]:  # file name like : .ignored
             return None
-        postfix = parts[-1].lower()
-        return f'.{postfix}' if postfix else None
+        suffix = parts[-1].lower()
+        return f'.{suffix}' if suffix else None

@@ -31,7 +31,7 @@ def uninialize() -> NoReturn:
 _iconval_cache = {}
 
 
-def _parse_iconval(postfix: str, iconval: str, bestwidth: Optional[int] = None) -> Optional[bytes]:
+def _parse_iconval(suffix: str, iconval: str, bestwidth: Optional[int] = None) -> Optional[bytes]:
     if iconval in _iconval_cache:
         return _iconval_cache[iconval]
     imgbin = None
@@ -72,52 +72,52 @@ def _get_reg(path, valname=''):
             win32api.RegCloseKey(hk)
 
 
-def _get_icon(postfix: str, best_width: Optional[int] = None) -> Optional[bytes]:
+def _get_icon(suffix: str, best_width: Optional[int] = None) -> Optional[bytes]:
     iconval = None
     try:
-        appid = _get_reg(postfix)
-        # perceivetype = _get_reg(postfix,'PerceivedType')
-        iconval = _get_reg(f'{postfix}\\DefaultIcon')
+        appid = _get_reg(suffix)
+        # perceivetype = _get_reg(suffix,'PerceivedType')
+        iconval = _get_reg(f'{suffix}\\DefaultIcon')
         if not iconval and appid:
             iconval = _get_reg(f'{appid}\\DefaultIcon')
             if iconval:
-                return _parse_iconval(postfix, iconval, best_width)
+                return _parse_iconval(suffix, iconval, best_width)
     except Exception as e:
-        print(f"Parse Error[{postfix}] : {iconval} :", e)
+        print(f"Parse Error[{suffix}] : {iconval} :", e)
     return None
 
 
-best_thumbnail_width = 128
 
 
-def query_file_icon(postfix: str) -> Optional[bytes]:
-    assert postfix and postfix.startswith('.')
+
+def query_file_icon(suffix: str) -> Optional[bytes]:
+    assert suffix and suffix.startswith('.')
     assert _icons_db != None
-    postfix = postfix.lower()
-    if postfix in _icons_db:
-        img = _icons_db[postfix]
+    suffix = suffix.lower()
+    if suffix in _icons_db:
+        img = _icons_db[suffix]
         return img if img else None
-    img = _get_icon(postfix, best_thumbnail_width)
-    _icons_db[postfix] = img if img else ''
+    img = _get_icon(suffix, settings.best_thumbnail_width)
+    _icons_db[suffix] = img if img else ''
     _icons_db.sync()
     return img
 
 
 def _get_all_type() -> List[str]:
-    postfixs = []
+    suffixs = []
     hk = win32api.RegOpenKeyEx(win32con.HKEY_CLASSES_ROOT, None)
     try:
         index = 0
         while True:
             sk = win32api.RegEnumKey(hk, index)
             if sk.startswith('.'):
-                postfixs.append(sk.lower())
+                suffixs.append(sk.lower())
             index += 1
     except pywintypes.error:
         pass
     finally:
         win32api.RegCloseKey(hk)
-    return postfixs
+    return suffixs
 
 
 def scan_register() -> NoReturn:
@@ -126,10 +126,10 @@ def scan_register() -> NoReturn:
     initialize()
     try:
         print('scan register... ')
-        postfixs = _get_all_type()
+        suffixs = _get_all_type()
 
-        total = len(postfixs)
-        for index, pfix in enumerate(postfixs):
+        total = len(suffixs)
+        for index, pfix in enumerate(suffixs):
             query_file_icon(pfix)
             print(f'extract {int((index + 1) / total * 100)}%')
     except Exception as e:

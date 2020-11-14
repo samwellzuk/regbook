@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 #     os.getcwd()                  D:\ChruchProjects\regbook\regbsvr
 
 preview_max_filesz = 5 * 1024 * 1024
+best_thumbnail_width = 128
 
 _file_exist_list = []
 root_dir = os.path.normpath(os.getcwd())
@@ -53,12 +54,12 @@ if os.path.isfile(settings_yml):
 qt_image_formats = set(['.' + s.data().decode() for s in QImageReader.supportedImageFormats()])
 
 vlc_dir = os.path.join(root_dir, 'vlc')
-vlc_libvic_dll = os.path.join(vlc_dir, 'libvlc.dll')
+vlc_libvlc_dll = os.path.join(vlc_dir, 'libvlc.dll')
 vlc_extensions_wxs = os.path.join(vlc_dir, "msi", "extensions.wxs")
-_file_exist_list.append(vlc_libvic_dll)
+_file_exist_list.append(vlc_libvlc_dll)
 _file_exist_list.append(vlc_extensions_wxs)
-os.environ["PYTHON_VLC_MODULE_PATH"] = vlc_dir
-os.environ["PYTHON_VLC_LIB_PATH"] = vlc_libvic_dll
+#os.environ["PYTHON_VLC_MODULE_PATH"] = vlc_dir
+#os.environ["PYTHON_VLC_LIB_PATH"] = vlc_libvlc_dll
 vlc_video_formats = set()
 vlc_audio_formats = set()
 if os.path.isfile(vlc_extensions_wxs):

@@ -193,6 +193,19 @@ def exico():
     finally:
         fileicon.uninialize()
 
+def exmv():
+    import sys
+    import pythoncom
+    from comm.vlctool import VlcExtractor
+    ex = VlcExtractor()
+    img = ex.take_snapshot(r'E:\mv\[66影视www.66ys.cn]哈利波特2之消失的密室DVD国语配音高清收藏版.rmvb')
+    if img:
+        print('ok')
+        with open('test.png','wb') as of:
+            of.write(img)
+    else:
+        print('failed')
+
 
 if __name__ == '__main__':
-    exico()
+    exmv()

@@ -1,12 +1,19 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>images/app.svg</file>
-    <file>images/avatar.png</file>
-    <file>images/default.ico</file>
-    <file>images/roratel.svg</file>
-    <file>images/rorater.svg</file>
-    <file>images/thumbnail.png</file>
-    <file>images/zoomin.png</file>
-    <file>images/zoomout.png</file>
-</qresource>
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file>images/app.png</file>
+        <file>images/avatar.png</file>
+        <file>images/default.ico</file>
+        <file>images/roratel.svg</file>
+        <file>images/rorater.svg</file>
+        <file>images/thumbnail.png</file>
+        <file>images/zoomin.png</file>
+        <file>images/zoomout.png</file>
+        <file>images/sound.png</file>
+        <file>images/mute.png</file>
+        <file>images/play.svg</file>
+        <file>images/pause.svg</file>
+        <file>images/power.png</file>
+        <file>images/vlc.ico</file>
+    </qresource>
 </RCC>

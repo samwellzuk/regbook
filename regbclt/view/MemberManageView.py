@@ -149,6 +149,16 @@ class MemberManageView(QWidget, Ui_MemberManageView):
             member = self.svc.add_member(dlg.member)
             self._membersmodel.add_model(member)
 
+    @pyqtSlot(QModelIndex)
+    @except_check
+    def on_baseView_doubleClicked(self, clickindex):
+        oldmem = self._membersmodel.get_model(clickindex.row())
+        self._query_photo(oldmem)
+        dlg = MemberDlg(copy(oldmem), parent=self)
+        if dlg.exec() == MemberDlg.Accepted:
+            member = self.svc.update_member(oldmem, dlg.member)
+            self._membersmodel.update_model(clickindex.row(), member)
+
     @pyqtSlot()
     @except_check
     def on_modifyButton_clicked(self):

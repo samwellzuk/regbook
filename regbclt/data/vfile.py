@@ -14,9 +14,10 @@ import pymongo
 from .model import VirFile, Member
 from .dbmgr import DBManager
 from comm.exiftool import extract_exif
-from comm.fileicon import best_thumbnail_width, query_file_icon
+from comm.fileicon import query_file_icon
+from comm.vlctool import VlcExtractor
 
-from settings import qt_image_formats
+from settings import qt_image_formats, best_thumbnail_width, vlc_video_formats
 
 
 class VirFileService(QObject):
@@ -76,9 +77,8 @@ class VirFileService(QObject):
         vfiles = []
         for i, vf in enumerate(vftmps):
             self.progressStepTxtChanged.emit(f'{vf.filename}')
-            try:
-                _, postfix = os.path.splitext(vf.filename)
-                if vf.thumbnail is None and postfix.lower() in qt_image_formats:
+            if vf.thumbnail is None and vf.file_suffix() in qt_image_formats:
+                try:
                     img = QImage(vf.filename)
                     resimg = img.scaled(best_thumbnail_width, best_thumbnail_width,
                                         Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -87,9 +87,9 @@ class VirFileService(QObject):
                     resbuf.open(QIODevice.WriteOnly)
                     resimg.save(resbuf, "PNG")  # thumbnail save to png for keeping transparent color
                     vf.thumbnail = resarr.data()
-                vfiles.append(vf)
-            except Exception as e:
-                self.progressErrChanged.emit(f'Step[3]({vf.filename}): {e}')
+                except Exception as e:
+                    self.progressErrChanged.emit(f'Step[3]({vf.filename}): {e}')
+            vfiles.append(vf)
             self.progressStepUpdated.emit(int(100 * (i + 1) / len(vftmps)))
             self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vftmps)))
         # 4 getting thumbnail of video which is supported by vlc
@@ -98,17 +98,26 @@ class VirFileService(QObject):
         self.progressUpdated.emit(progress)
         self.progressTxtChanged.emit('Step[4]: Getting thumbnail of video...')
         self.progressStepUpdated.emit(0)
-        vftmps = vfiles
-        vfiles = []
-        for i, vf in enumerate(vftmps):
-            self.progressStepTxtChanged.emit(f'{vf.filename}')
-            try:
-
+        has_video = False
+        for vf in vfiles:
+            if vf.file_suffix() in vlc_video_formats:
+                has_video = True
+                break
+        if has_video:
+            vlcex = VlcExtractor()
+            vftmps = vfiles
+            vfiles = []
+            for i, vf in enumerate(vftmps):
+                self.progressStepTxtChanged.emit(f'{vf.filename}')
+                if vf.file_suffix() in vlc_video_formats:
+                    try:
+                        img = vlcex.take_snapshot(vf.filename.replace('/', '\\'))
+                        vf.thumbnail = img
+                    except Exception as e:
+                        self.progressErrChanged.emit(f'Step[4]({vf.filename}): {e}')
                 vfiles.append(vf)
-            except Exception as e:
-                self.progressErrChanged.emit(f'Step[4]({vf.filename}): {e}')
-            self.progressStepUpdated.emit(int(100 * (i + 1) / len(vftmps)))
-            self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vftmps)))
+                self.progressStepUpdated.emit(int(100 * (i + 1) / len(vftmps)))
+                self.progressUpdated.emit(progress + int(step_total * (i + 1) / len(vftmps)))
         # 5 uploading files to mongodb, get VirFile
         progress += step_total
         step_total = 50
@@ -169,8 +178,8 @@ class VirFileService(QObject):
             self.progressStepTxtChanged.emit(f'{vf.filename}')
             try:
                 if not vf.thumbnail:
-                    if postfix := vf.file_postfix():
-                        query_file_icon(postfix)
+                    if suffix := vf.file_suffix():
+                        query_file_icon(suffix)
             except Exception as e:
                 self.progressErrChanged.emit(f'Step[6]({vf.filename}): {e}')
             self.progressStepUpdated.emit(int(100 * (i + 1) / len(vfiles)))
@@ -250,7 +259,7 @@ class VirFileService(QObject):
             coll = DBManager().get_db().get_collection('fs.files')
             total = coll.count_documents({"metadata.owner_id": member._id})
             index = 0
-            for outf in coll.find({"metadata.owner_id": member._id},sort=[('uploadDate', pymongo.DESCENDING)]):
+            for outf in coll.find({"metadata.owner_id": member._id}, sort=[('uploadDate', pymongo.DESCENDING)]):
                 vf = VirFile(**outf)
                 vfiles.append(vf)
                 self.progressStepUpdated.emit(int(100 * (index + 1) / total))
@@ -268,8 +277,8 @@ class VirFileService(QObject):
             self.progressStepTxtChanged.emit(f'{vf.filename}')
             try:
                 if not vf.thumbnail:
-                    if postfix := vf.file_postfix():
-                        query_file_icon(postfix)
+                    if suffix := vf.file_suffix():
+                        query_file_icon(suffix)
             except Exception as e:
                 self.progressErrChanged.emit(f'Step[2]({vf.filename}): {e}')
             self.progressStepUpdated.emit(int(100 * (i + 1) / len(vfiles)))

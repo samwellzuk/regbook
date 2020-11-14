@@ -4,6 +4,7 @@
 Module implementing MediaManageDlg.
 """
 import os
+from enum import Enum
 from PyQt5.QtCore import pyqtSlot, QModelIndex, QItemSelection, QDir, QIODevice, QByteArray, QBuffer
 from PyQt5.QtWidgets import QDialog, QMessageBox, QFileDialog
 from PyQt5.QtGui import QPixmap, QTransform
@@ -17,8 +18,15 @@ from vm.virfiles import VirFileModel
 
 from settings import vlc_audio_formats, vlc_video_formats, preview_max_filesz, tmp_dir
 
+from .MediaPlayDlg import MediaPlayDlg
 from .ProgressStepDlg import ProgressStepDlg
 from .ui_MediaManageDlg import Ui_MediaManagDlg
+
+
+class PreviewType(Enum):
+    NoPreview = 0
+    VlcPreview = 1
+    OpenPreview = 2
 
 
 class MediaManageDlg(QDialog, Ui_MediaManagDlg):
@@ -55,12 +63,13 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
         self.ownerGbox.setTitle(member.name)
         self._refresh_vfs()
 
-    def _is_vlc_preview(self, vf):
-        postfix = vf.filename.split('.')[-1]
-        postfix = f'.{postfix.lower()}'
-        if postfix in vlc_video_formats or postfix in vlc_audio_formats:
-            return True
-        return False
+    def _get_preview_type(self, vf):
+        suffix = vf.file_suffix()
+        if suffix in vlc_video_formats or suffix in vlc_audio_formats:
+            return PreviewType.VlcPreview
+        elif vf.length <= preview_max_filesz:
+            return PreviewType.OpenPreview
+        return PreviewType.NoPreview
 
     def _check_state(self):
         items = self._selectmodel.selectedIndexes()
@@ -75,10 +84,7 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
             self.downloadButton.setEnabled(True)
             self.deleteButton.setEnabled(True)
             vf = self._vfmodel.get_model(items[0].row())
-            if self._is_vlc_preview(vf):
-                self.previewButton.setEnabled(True)
-            else:
-                self.previewButton.setEnabled(vf.length <= preview_max_filesz)
+            self.previewButton.setEnabled(self._get_preview_type(vf) != PreviewType.NoPreview)
             self.exifText.setHtml(vf.exif)
             if vf.thumbnail:
                 self.rorateLeft.setEnabled(True)
@@ -240,17 +246,28 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
     def on_rorateRight_clicked(self):
         self._on_rorate(True)
 
-    @pyqtSlot()
-    @except_check
-    def on_previewButton_clicked(self):
-        vfiles, vrows = self._get_selected_vfs()
-        vf = vfiles[0]
-        if self._is_vlc_preview(vf):
-            QMessageBox.information(self, 'Playing', f'Playing {vf.filename}')
-        else:
+    def _do_preview(self, vf):
+        pty = self._get_preview_type(vf)
+        if pty == PreviewType.VlcPreview:
+            dlg = MediaPlayDlg(vf)
+            dlg.exec()
+        elif pty == PreviewType.OpenPreview:
             dpath = os.path.join(tmp_dir, str(vf._id))
             os.makedirs(dpath, exist_ok=True)
             fpath = os.path.join(dpath, vf.filename)
             if not os.path.isfile(fpath):
                 self._download_files([vf], dpath)
             webbrowser.open(fpath)
+
+    @pyqtSlot()
+    @except_check
+    def on_previewButton_clicked(self):
+        vfiles, vrows = self._get_selected_vfs()
+        self._do_preview(vfiles[0])
+
+    @pyqtSlot(QModelIndex)
+    @except_check
+    def on_listView_doubleClicked(self, clickindex):
+        vfiles, vrows = self._get_selected_vfs()
+        if len(vfiles) == 1:
+            self._do_preview(vfiles[0])

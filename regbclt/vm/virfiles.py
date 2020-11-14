@@ -4,26 +4,27 @@ from PyQt5.QtCore import QAbstractListModel, QModelIndex, QVariant, Qt, QSize, Q
 from PyQt5.QtGui import QPixmap, QPainter
 
 from comm.utility import except_check
-from comm.fileicon import query_file_icon, best_thumbnail_width
+from comm.fileicon import query_file_icon
+from settings import best_thumbnail_width
 
-_role_dict = {
-    0: 'DisplayRole',
-    1: 'DecorationRole',
-    2: 'EditRole',
-    3: 'ToolTipRole',
-    4: 'StatusTipRole',
-    5: 'WhatsThisRole',
-    13: 'SizeHintRole',
-    6: 'FontRole',
-    7: 'TextAlignmentRole',
-    8: 'BackgroundRole',
-    9: 'ForegroundRole',
-    10: 'CheckStateRole',
-    14: 'InitialSortOrderRole',
-    11: 'AccessibleTextRole',
-    12: 'AccessibleDescriptionRole',
-    256: 'UserRole',
-}
+# _role_dict = {
+#     0: 'DisplayRole',
+#     1: 'DecorationRole',
+#     2: 'EditRole',
+#     3: 'ToolTipRole',
+#     4: 'StatusTipRole',
+#     5: 'WhatsThisRole',
+#     13: 'SizeHintRole',
+#     6: 'FontRole',
+#     7: 'TextAlignmentRole',
+#     8: 'BackgroundRole',
+#     9: 'ForegroundRole',
+#     10: 'CheckStateRole',
+#     14: 'InitialSortOrderRole',
+#     11: 'AccessibleTextRole',
+#     12: 'AccessibleDescriptionRole',
+#     256: 'UserRole',
+# }
 
 
 class VirFileModel(QAbstractListModel):
@@ -38,8 +39,8 @@ class VirFileModel(QAbstractListModel):
             pixmap = QPixmap()
             pixmap.loadFromData(m.thumbnail)
             return pixmap
-        if postfix := m.file_postfix():
-            if imgbytes := query_file_icon(postfix):
+        if suffix := m.file_suffix():
+            if imgbytes := query_file_icon(suffix):
                 pixmap = QPixmap()
                 pixmap.loadFromData(imgbytes)
                 return pixmap
@@ -56,7 +57,7 @@ class VirFileModel(QAbstractListModel):
             dstimg.fill(Qt.transparent)
             painter = QPainter()
             if painter.begin(dstimg):
-                x = int((best_thumbnail_width - pixmap.width())/2)
+                x = int((best_thumbnail_width - pixmap.width()) / 2)
                 y = int(best_thumbnail_width - pixmap.height())
                 dstrect = QRect(x, y, pixmap.width(), pixmap.height())
                 srcrect = QRect(0, 0, pixmap.width(), pixmap.height())
