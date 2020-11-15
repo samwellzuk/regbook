@@ -105,15 +105,11 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
     @pyqtSlot(QModelIndex, QModelIndex)
     @except_check
     def on_current_change(self, current, previous):
-        # print('current: from ', previous.row() if previous.isValid() else -1, ' to ',
-        #       current.row() if current.isValid() else -1, )
         self._check_state()
 
     @pyqtSlot(QItemSelection, QItemSelection)
     @except_check
     def on_selection_change(self, selected, deselected):
-        # print('current: from ', [i.row() for i in selected.indexes()],
-        #       ' to ', [i.row() for i in deselected.indexes()])
         self._check_state()
 
     @coroutine(is_block=True)

@@ -4,6 +4,7 @@ from typing import Tuple, Optional, NoReturn, List
 import pathlib
 import os
 import dbm
+import logging
 
 import win32api
 import win32con
@@ -83,11 +84,8 @@ def _get_icon(suffix: str, best_width: Optional[int] = None) -> Optional[bytes]:
             if iconval:
                 return _parse_iconval(suffix, iconval, best_width)
     except Exception as e:
-        print(f"Parse Error[{suffix}] : {iconval} :", e)
+        logging.exception('Parse Error[%s] : {%s} ', suffix, iconval)
     return None
-
-
-
 
 
 def query_file_icon(suffix: str) -> Optional[bytes]:
@@ -133,6 +131,6 @@ def scan_register() -> NoReturn:
             query_file_icon(pfix)
             print(f'extract {int((index + 1) / total * 100)}%')
     except Exception as e:
-        print(e)
+        logging.exception('scan_register')
     finally:
         uninialize()

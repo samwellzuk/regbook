@@ -1,4 +1,10 @@
 PyQt5
-PyQtWebEngine
 pymongo
 pyyaml
+pefile
+python-vlc
+pywin32
+pyinstaller
+PyQt5-stubs
+
+

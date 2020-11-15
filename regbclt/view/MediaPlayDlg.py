@@ -8,9 +8,9 @@ import datetime
 import ctypes
 import copy
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtGui import QCloseEvent, QPainter, QColor, QPen
 
 import vlc
 from comm.utility import except_check
@@ -168,7 +168,7 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
     @except_check
     def volume_change(self, volume):
         val = int(volume * 100)
-        if val > 0: # when finished , volume set to -1.0
+        if val > 0:  # when finished , volume set to -1.0
             if val > 100:
                 val = 100
             self.volumeLabel.setText(f'{val}')

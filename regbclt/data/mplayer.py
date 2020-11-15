@@ -162,7 +162,6 @@ _obj_lock = threading.Lock()
 
 
 def cache_object(key: int, *arg):
-    print(f'cache_object: {key}')
     with _obj_lock:
         if key in _obj_cache:
             raise RuntimeError(f'cache_object: key duplicate: {key}')
@@ -170,7 +169,6 @@ def cache_object(key: int, *arg):
 
 
 def cache_remove(key: int):
-    print(f'cache_remove: {key}')
     with _obj_lock:
         if key not in _obj_cache:
             raise RuntimeError(f'cache_remove: key not found: {key}')
@@ -181,7 +179,6 @@ def cache_remove(key: int):
 def media_open_cb(opaque, data_pointer, size_pointer):
     try:
         vf = ctypes.cast(opaque, ctypes.POINTER(ctypes.py_object)).contents.value
-        print(vf.filename)
         outf = _vfile_svc.open_file_content(vf)
         p1 = ctypes.py_object(outf)
         p2 = ctypes.pointer(p1)
@@ -199,10 +196,10 @@ def media_open_cb(opaque, data_pointer, size_pointer):
 def media_read_cb(opaque, buffer, length):
     try:
         outf = ctypes.cast(opaque, ctypes.POINTER(ctypes.py_object)).contents.value
-        new_data = outf.read(length)
-        for i in range(len(new_data)):
-            buffer[i] = new_data[i]
-        return len(new_data)
+        data = outf.read(length)
+        sz = len(data)
+        ctypes.memmove(buffer, data, sz)
+        return sz
     except Exception as e:
         logging.exception('media_read_cb')
         return -1
