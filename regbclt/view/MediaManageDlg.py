@@ -86,7 +86,7 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
             self.downloadButton.setEnabled(True)
             self.deleteButton.setEnabled(True)
             vf = self._vfmodel.get_model(items[0].row())
-            self.previewButton.setEnabled(self._get_preview_type(vf) != PreviewType.NoPreview)
+            self.previewButton.setEnabled(True)
             self.exifText.setHtml(vf.exif)
             if vf.thumbnail:
                 self.rorateLeft.setEnabled(True)
@@ -261,6 +261,9 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
             if not os.path.isfile(fpath):
                 self._download_files([vf], dpath)
             webbrowser.open(fpath)
+        else:
+            QMessageBox.information(self, 'Preview',
+                                    "Can't preview file which size more than 5M,\nPlease just download it.")
 
     def done(self, a0: int) -> None:
         super(MediaManageDlg, self).done(a0)

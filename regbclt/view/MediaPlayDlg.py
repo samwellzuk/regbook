@@ -3,163 +3,21 @@
 """
 Module implementing ChangePwdDlg.
 """
-import logging
 import time
 import datetime
-from enum import Enum
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer, QObject
+import ctypes
+import copy
+
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QCloseEvent
 
 import vlc
 from comm.utility import except_check
+from data.mplayer import EventTracker, MeidaPlayerState, media_open_cb, media_read_cb, media_seek_cb, media_close_cb, \
+    cache_object, cache_remove
 
 from .ui_MediaPlayDlg import Ui_MediaPlayDlg
-
-
-class MeidaPlayerState(Enum):
-    NothingSpecial = 0
-    Opening = 1
-    # Buffering = 2  #Deprecated
-    Playing = 3
-    Paused = 4
-    Stopped = 5
-    EndReached = 6
-    EncounteredError = 7
-    Forward = 8
-    Backward = 9
-
-
-class EventTracker(QObject):
-    MediaPlayerStateChanged = pyqtSignal(MeidaPlayerState)
-    MediaPlayerBuffering = pyqtSignal(float)
-    MediaPlayerTimeChanged = pyqtSignal(int)  # libvlc_time_t
-    MediaPlayerPositionChanged = pyqtSignal(float)
-    MediaPlayerSeekableChanged = pyqtSignal(int)
-    MediaPlayerPausableChanged = pyqtSignal(int)
-    MediaPlayerTitleChanged = pyqtSignal(int)
-    MediaPlayerSnapshotTaken = pyqtSignal(str)
-    MediaPlayerLengthChanged = pyqtSignal(int)  # libvlc_time_t
-    MediaPlayerVout = pyqtSignal(int)
-    MediaPlayerScrambledChanged = pyqtSignal(int)
-    # MediaPlayerESAdded = pyqtSignal()
-    # MediaPlayerESDeleted = pyqtSignal()
-    # MediaPlayerESSelected = pyqtSignal()
-    MediaPlayerCorked = pyqtSignal()
-    MediaPlayerUncorked = pyqtSignal()
-    MediaPlayerMuted = pyqtSignal()
-    MediaPlayerUnmuted = pyqtSignal()
-    MediaPlayerAudioVolume = pyqtSignal(float)
-    # MediaPlayerAudioDevice = pyqtSignal(str)
-    # MediaPlayerChapterChanged = pyqtSignal(int)
-
-    StateEvents = {
-        vlc.EventType.MediaPlayerNothingSpecial: MeidaPlayerState.NothingSpecial,
-        vlc.EventType.MediaPlayerOpening: MeidaPlayerState.Opening,
-        vlc.EventType.MediaPlayerPlaying: MeidaPlayerState.Playing,
-        vlc.EventType.MediaPlayerPaused: MeidaPlayerState.Paused,
-        vlc.EventType.MediaPlayerStopped: MeidaPlayerState.Stopped,
-        vlc.EventType.MediaPlayerForward: MeidaPlayerState.Forward,
-        vlc.EventType.MediaPlayerBackward: MeidaPlayerState.Backward,
-        vlc.EventType.MediaPlayerEndReached: MeidaPlayerState.EndReached,
-        vlc.EventType.MediaPlayerEncounteredError: MeidaPlayerState.EncounteredError,
-    }
-    TrackEvents = [
-        vlc.EventType.MediaPlayerNothingSpecial,
-        vlc.EventType.MediaPlayerOpening,
-        vlc.EventType.MediaPlayerPlaying,
-        vlc.EventType.MediaPlayerPaused,
-        vlc.EventType.MediaPlayerStopped,
-        vlc.EventType.MediaPlayerForward,
-        vlc.EventType.MediaPlayerBackward,
-        vlc.EventType.MediaPlayerEndReached,
-        vlc.EventType.MediaPlayerEncounteredError,
-        vlc.EventType.MediaPlayerBuffering,
-        vlc.EventType.MediaPlayerTimeChanged,
-        vlc.EventType.MediaPlayerPositionChanged,
-        vlc.EventType.MediaPlayerSeekableChanged,
-        vlc.EventType.MediaPlayerPausableChanged,
-        vlc.EventType.MediaPlayerTitleChanged,
-        vlc.EventType.MediaPlayerSnapshotTaken,
-        vlc.EventType.MediaPlayerLengthChanged,
-        vlc.EventType.MediaPlayerVout,
-        vlc.EventType.MediaPlayerScrambledChanged,
-        vlc.EventType.MediaPlayerCorked,
-        vlc.EventType.MediaPlayerUncorked,
-        vlc.EventType.MediaPlayerMuted,
-        vlc.EventType.MediaPlayerUnmuted,
-        vlc.EventType.MediaPlayerAudioVolume,
-    ]
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-    def register(self, mediaplayer):
-        eventmgr = mediaplayer.event_manager()
-        for env in EventTracker.TrackEvents:
-            eventmgr.event_attach(env, self.event_callback)
-
-    def unregister(self, mediaplayer):
-        eventmgr = mediaplayer.event_manager()
-        for env in EventTracker.TrackEvents:
-            eventmgr.event_detach(env)
-
-    def event_callback(self, event):
-        if event.type in EventTracker.StateEvents:
-            state = EventTracker.StateEvents[event.type]
-            self.MediaPlayerStateChanged.emit(state)
-            logging.debug('MediaPlayerStateChanged: %s', state.name)
-        elif event.type == vlc.EventType.MediaPlayerBuffering:
-            self.MediaPlayerBuffering.emit(event.u.new_cache)
-            logging.debug('MediaPlayerBuffering: %s', event.u.new_cache)
-        elif event.type == vlc.EventType.MediaPlayerTimeChanged:
-            self.MediaPlayerTimeChanged.emit(event.u.new_time)
-            logging.debug('MediaPlayerTimeChanged: %s', event.u.new_time)
-        elif event.type == vlc.EventType.MediaPlayerPositionChanged:
-            self.MediaPlayerPositionChanged.emit(event.u.new_position)
-            logging.debug('MediaPlayerPositionChanged: %s', event.u.new_position)
-        elif event.type == vlc.EventType.MediaPlayerSeekableChanged:
-            val = event.u.new_seekable & 0xFFFFFFFF
-            self.MediaPlayerSeekableChanged.emit(val)
-            logging.debug('MediaPlayerSeekableChanged: %s', val)
-        elif event.type == vlc.EventType.MediaPlayerPausableChanged:
-            val = event.u.new_pausable & 0xFFFFFFFF
-            self.MediaPlayerPausableChanged.emit(val)
-            logging.debug('MediaPlayerPausableChanged: %s', val)
-        elif event.type == vlc.EventType.MediaPlayerTitleChanged:
-            self.MediaPlayerTitleChanged.emit(event.u.new_title)
-            logging.debug('MediaPlayerTitleChanged: %s', event.u.new_title)
-        elif event.type == vlc.EventType.MediaPlayerSnapshotTaken:
-            self.MediaPlayerSnapshotTaken.emit(event.u.psz_filename)
-            logging.debug('MediaPlayerSnapshotTaken: %s', event.u.psz_filename)
-        elif event.type == vlc.EventType.MediaPlayerLengthChanged:
-            self.MediaPlayerLengthChanged.emit(event.u.new_length)
-            logging.debug('MediaPlayerLengthChanged: %s', event.u.new_length)
-        elif event.type == vlc.EventType.MediaPlayerVout:
-            self.MediaPlayerVout.emit(event.u.new_count)
-            logging.debug('MediaPlayerVout: %s', event.u.new_count)
-        elif event.type == vlc.EventType.MediaPlayerScrambledChanged:
-            val = event.u.new_scrambled & 0xFFFFFFFF
-            self.MediaPlayerScrambledChanged.emit(val)
-            logging.debug('MediaPlayerScrambledChanged: %s', val)
-        elif event.type == vlc.EventType.MediaPlayerCorked:
-            self.MediaPlayerCorked.emit()
-            logging.debug('MediaPlayerCorked')
-        elif event.type == vlc.EventType.MediaPlayerUncorked:
-            self.MediaPlayerUncorked.emit()
-            logging.debug('MediaPlayerUncorked')
-        elif event.type == vlc.EventType.MediaPlayerMuted:
-            self.MediaPlayerMuted.emit()
-            logging.debug('MediaPlayerMuted')
-        elif event.type == vlc.EventType.MediaPlayerUnmuted:
-            self.MediaPlayerUnmuted.emit()
-            logging.debug('MediaPlayerUnmuted')
-        elif event.type == vlc.EventType.MediaPlayerAudioVolume:
-            # vlc python don't define volume, so use new_position
-            self.MediaPlayerAudioVolume.emit(event.u.new_position)
-            logging.debug('MediaPlayerAudioVolume: %s', event.u.new_position)
-        else:
-            logging.debug('Unkonw Event: %s', event.type)
 
 
 class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
@@ -176,7 +34,13 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
         """
         super(MediaPlayDlg, self).__init__(parent)
         self.setupUi(self)
-        self.vfile = vfile
+        self.vf = copy.copy(vfile)  # make a new id by copy
+        p1 = ctypes.py_object(self.vf)
+        p2 = ctypes.pointer(p1)
+        p3 = ctypes.cast(p2, ctypes.c_void_p)
+        cache_object(id(self.vf), p1, p2, p3)
+        self.vf_pointer = p3
+
         # creating a basic vlc instance
         self.instance = vlc.Instance()
         # creating an empty vlc media player
@@ -201,8 +65,15 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
         self.setWindowTitle(f'{vfile.filename} - Vlc Media Player')
         self.open_video()
 
+    def __del__(self):
+        cache_remove(id(self.vf))
+
     def open_video(self):
-        media = self.mediaplayer.set_mrl(r'C:\Users\atten\Desktop\Photo\103APPLE\IMG_3606.MOV')
+        media = self.instance.media_new_callbacks(
+            media_open_cb, media_read_cb, media_seek_cb, media_close_cb,
+            self.vf_pointer
+        )
+        self.mediaplayer.set_media(media)
         media.release()
         self.mediaplayer.play()
 
@@ -297,25 +168,13 @@ class MediaPlayDlg(QDialog, Ui_MediaPlayDlg):
     @except_check
     def volume_change(self, volume):
         val = int(volume * 100)
-        if val > 0:
+        if val > 0: # when finished , volume set to -1.0
             if val > 100:
                 val = 100
             self.volumeLabel.setText(f'{val}')
-
-            self.voiceButton.blockSignals(True)
-            self.voiceButton.setChecked(False)
-            self.voiceButton.blockSignals(False)
-
-            self.volumeSlider.setEnabled(True)
             self.volumeSlider.blockSignals(True)
             self.volumeSlider.setValue(val)
             self.volumeSlider.blockSignals(False)
-        else:
-            self.voiceButton.blockSignals(True)
-            self.voiceButton.setChecked(True)
-            self.voiceButton.blockSignals(False)
-
-            self.volumeSlider.setEnabled(False)
 
     @pyqtSlot(float)
     @except_check

@@ -292,13 +292,9 @@ class VirFileService(QObject):
         self.progressTxtChanged.emit('Finished')
         return vfiles
 
-    def open_file_content(self, vfile: VirFile) -> gridfs.GridOut:
-        self.progressUpdated.emit(0)
-        self.progressTxtChanged.emit('Querying file content...')
+    def open_file_content(self, vf: VirFile) -> gridfs.GridOut:
         dbfs = gridfs.GridFS(DBManager().get_db(), disable_md5=True)
-        outf = dbfs.get(vfile._id)
-        self.progressUpdated.emit(100)
-        self.progressTxtChanged.emit('Finished')
+        outf = dbfs.get(vf._id)
         return outf
 
     def update_file_thumbnail(self, vfile: VirFile, thumbnail: bytes) -> VirFile:
