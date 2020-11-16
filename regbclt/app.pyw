@@ -1,11 +1,18 @@
 # -*-coding: utf-8 -*-
 # Created by samwell
 import sys
+# sys.coinit_flags set to COINIT_APARTMENTTHREADED|COINIT_DISABLE_OLE1DDE == 6
+# for ShellExecute https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea
+sys.coinit_flags = 6
+# import after sys.coinit_flags set
+import pythoncom
+
 # init environ
 import settings
 from comm import fileicon
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
+
 from view.MainWnd import MainWindow
 from view.LoginDlg import LoginDlg
 

@@ -8,7 +8,7 @@ from enum import Enum
 from PyQt5.QtCore import pyqtSlot, QModelIndex, QItemSelection, QDir, QIODevice, QByteArray, QBuffer
 from PyQt5.QtWidgets import QDialog, QMessageBox, QFileDialog
 from PyQt5.QtGui import QPixmap, QTransform
-import webbrowser
+import win32api
 
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
@@ -16,7 +16,7 @@ from comm.utility import except_check
 from data.vfile import VirFileService
 from vm.virfiles import VirFileModel
 
-from settings import vlc_audio_formats, vlc_video_formats, preview_max_filesz, tmp_dir
+from settings import vlc_audio_formats, vlc_video_formats, preview_max_filesz, temp_dir
 
 from .MediaPlayDlg import MediaPlayDlg
 from .ProgressStepDlg import ProgressStepDlg
@@ -251,12 +251,12 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
             dlg.show()
             self._preview_dlglist.append(dlg)
         elif pty == PreviewType.OpenPreview:
-            dpath = os.path.join(tmp_dir, str(vf._id))
+            dpath = os.path.join(temp_dir, str(vf._id))
             os.makedirs(dpath, exist_ok=True)
             fpath = os.path.join(dpath, vf.filename)
             if not os.path.isfile(fpath):
                 self._download_files([vf], dpath)
-            webbrowser.open(fpath)
+            win32api.ShellExecute(self.winId(), 'open', fpath, None, dpath, 5)
         else:
             QMessageBox.information(self, 'Preview',
                                     "Can't preview file which size more than 5M,\nPlease just download it.")

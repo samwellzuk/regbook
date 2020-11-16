@@ -63,7 +63,7 @@ class PhotoWidget(QWidget):
         avatar_arr = QByteArray()
         avatar_buf = QBuffer(avatar_arr)
         avatar_buf.open(QIODevice.WriteOnly)
-        imgavatar.save(avatar_buf, "JPG")
+        imgavatar.save(avatar_buf, "PNG")  # avatar must save to png, so can replace default avatar.png in word document
         head_arr = QByteArray()
         head_buf = QBuffer(head_arr)
         head_buf.open(QIODevice.WriteOnly)

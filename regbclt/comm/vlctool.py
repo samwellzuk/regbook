@@ -4,7 +4,7 @@ import os
 import time
 from tempfile import mkstemp
 from threading import Condition
-from settings import best_thumbnail_width, tmp_dir
+from settings import best_thumbnail_width, temp_dir
 import vlc
 
 _snapshot_type = 'png'
@@ -71,7 +71,7 @@ class VlcExtractor(object):
         return r == 0
 
     def take_snapshot(self, filepath: str) -> bytes:
-        tmpf, tmpfname = mkstemp(suffix=f'.{_snapshot_type}', dir=tmp_dir)
+        tmpf, tmpfname = mkstemp(suffix=f'.{_snapshot_type}', dir=temp_dir)
         os.close(tmpf)
         media = None
         mplayer = None

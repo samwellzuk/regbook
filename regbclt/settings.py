@@ -35,9 +35,13 @@ cache_dir = os.path.join(root_dir, 'cache')
 if not os.path.isdir(cache_dir):
     os.makedirs(cache_dir, exist_ok=True)
 
-tmp_dir = os.path.join(root_dir, 'tmp')
-if not os.path.isdir(tmp_dir):
-    os.makedirs(tmp_dir, exist_ok=True)
+tmpl_dir = os.path.join(root_dir, 'tmpl')
+if not os.path.isdir(tmpl_dir):
+    os.makedirs(tmpl_dir, exist_ok=True)
+
+temp_dir = os.path.join(root_dir, 'temp')
+if not os.path.isdir(temp_dir):
+    os.makedirs(temp_dir, exist_ok=True)
 
 cities_yml = os.path.join(root_dir, "conf", "cities.yml")
 _file_exist_list.append(cities_yml)

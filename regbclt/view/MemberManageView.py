@@ -3,25 +3,36 @@
 """
 Module implementing MemberManageView.
 """
-
-from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt
-from PyQt5.QtWidgets import QWidget, QMessageBox
-
+import io
+import os
 from copy import copy
+from dataclasses import asdict
+from tempfile import mkstemp
+
+from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QStandardPaths
+from PyQt5.QtWidgets import QWidget, QMessageBox, QFileDialog
+
+from docxtpl import DocxTemplate
+import win32api
+
 from comm.asynctask import coroutine, AsyncTask
 from comm.utility import except_check
 
 from data.model import Member
 from data.dbmgr import DBManager
-from vm.members import MembersModel
-
 from data.members import MemberService
 from data.vfile import VirFileService
+
+from vm.members import MembersModel
+from vm.basereport import PersonReport
+
+from settings import tmpl_dir, temp_dir
 
 from .ui_MemberManageView import Ui_MemberManageView
 from .ProgressDlg import ProgressDlg
 from .MemberDlg import MemberDlg
 from .MediaManageDlg import MediaManageDlg
+from .TmplDlg import TmplDlg, NextAction
 
 _default_pagenum = '10'
 
@@ -81,12 +92,38 @@ class MemberManageView(QWidget, Ui_MemberManageView):
 
             self.total_pages_ = int(total / self.num_page_) + (1 if total % self.num_page_ > 0 else 0)
 
-            self.totalpageLabel.setText(f"共有{total}条记录，分为{self.total_pages_}页，当前第{self.cur_page_ + 1}页")
+            self.totalpageLabel.setText(
+                f"Total {total} records, {self.total_pages_} pages, current {self.cur_page_ + 1} page")
             self.startButton.setEnabled(self.cur_page_ != 0)
             self.preButton.setEnabled(self.cur_page_ != 0)
             self.nextButton.setEnabled(self.total_pages_ > self.cur_page_ + 1)
             self.endButton.setEnabled(self.total_pages_ > self.cur_page_ + 1)
             self._membersmodel.reset_models(members)
+        finally:
+            self.progressdlg.close()
+
+    @coroutine(is_block=True)
+    def _export_members(self, excelfile):
+        self.progressdlg.open()
+        try:
+            self._selectmodel.clear()
+            kw = self.keywordEdit.text().strip()
+            keyword = kw if kw else None
+            sortkey = self._membersmodel.sortkey
+            sortorder = self._membersmodel.sortorder
+
+            total, members = yield AsyncTask(self.svc.query_members, 0, 0, keyword, sortkey, sortorder)
+            if not members:
+                QMessageBox.warning(self, 'Export', 'Query records is empty, nothing to export!')
+                return
+            report = PersonReport(members, 0)
+            report.progressUpdated.connect(self.progressdlg.setValue)
+            report.progressTxtChanged.connect(self.progressdlg.setLabelText)
+            try:
+                report.exportModel(excelfile, 'Members')
+            finally:
+                report.progressUpdated.disconnect(self.progressdlg.setValue)
+                report.progressTxtChanged.disconnect(self.progressdlg.setLabelText)
         finally:
             self.progressdlg.close()
 
@@ -138,8 +175,14 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     @pyqtSlot()
     @except_check
     def on_refreshButton_clicked(self):
+        self.cur_page_ = 0
         self.keywordEdit.setText('')
-        self.baseView.sortByColumn(-1, Qt.AscendingOrder)
+        if self._membersmodel.sortkey:
+            self.baseView.sortByColumn(-1, Qt.AscendingOrder)
+        else:
+            self._query_members()
+
+
 
     @pyqtSlot()
     @except_check
@@ -243,7 +286,14 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     @pyqtSlot()
     @except_check
     def on_exportButton_clicked(self):
-        pass
+        excelfile, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Excel File",
+            QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation),
+            f"Office Excel File(*.xlsx)"
+        )
+        if excelfile:
+            self._export_members(excelfile)
 
     @pyqtSlot()
     @except_check
@@ -256,4 +306,65 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     @pyqtSlot()
     @except_check
     def on_printButton_clicked(self):
-        pass
+        index = self._selectmodel.currentIndex()
+        member = self._membersmodel.get_model(index.row())
+        self._query_photo(member)
+        tmpllist = []
+        for fname in os.listdir(tmpl_dir):
+            if fname.lower().endswith('.docx') and not fname.lower().startswith('~'):
+                tmpllist.append(fname)
+        if not tmpllist:
+            QMessageBox.warning(self, 'Template', "Can't find any template file!")
+            return
+
+        dlg = TmplDlg(tmpllist, parent=self)
+        dlg.exec()
+        if dlg.result() != TmplDlg.Accepted:
+            return
+        tmplfile = os.path.join(tmpl_dir, dlg.tmpl)
+        nextaction = dlg.nextaction
+
+        avatarimg = None
+        avatarpath = os.path.join(tmpl_dir, 'avatar.png')
+        if os.path.isfile(avatarpath):
+            with open(avatarpath, 'rb') as of:
+                avatarimg = of.read()
+        elif member.avatar:
+            r = QMessageBox.question(self, 'Template',
+                                     "Can't find avatar.png, the head photo can't replace.\nDo you want continue?")
+            if r != QMessageBox.Yes:
+                return
+        if nextaction == NextAction.Print:
+            tmpf, outdocx = mkstemp(suffix=f'.docx', dir=temp_dir)
+            os.close(tmpf)
+        else:
+            outdocx, _ = QFileDialog.getSaveFileName(
+                self,
+                "Save Docx File",
+                QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation),
+                f"Office Word File(*.docx)"
+            )
+            if not outdocx:
+                return
+        personalimg = member.avatar
+        context = asdict(member)
+        context.pop('_id')
+        context.pop('_ts')
+        context.pop('thumbnail')
+        context.pop('avatar')
+        context.pop('photo')
+        context.pop('photofmt')
+        doc = DocxTemplate(tmplfile)
+        if avatarimg and personalimg:
+            doc.replace_media(io.BytesIO(avatarimg), io.BytesIO(personalimg))
+        doc.render(context)
+        doc.save(outdocx)
+
+        if nextaction == NextAction.Open:
+            op = 'open'
+        elif nextaction == NextAction.Print:
+            op = 'print'
+        else:
+            return
+        outdir = os.path.dirname(outdocx)
+        win32api.ShellExecute(self.winId(), op, outdocx, None, outdir, 5)
