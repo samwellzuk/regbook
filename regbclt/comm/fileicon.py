@@ -3,7 +3,7 @@
 from typing import Tuple, Optional, NoReturn, List
 import pathlib
 import os
-import dbm
+from dbm import dumb
 import logging
 
 import win32api
@@ -19,7 +19,7 @@ _icons_db = None
 def initialize() -> NoReturn:
     global _icons_db
     if _icons_db is None:
-        _icons_db = dbm.open(os.path.join(settings.cache_dir, 'icons'), 'c')
+        _icons_db = dumb.open(os.path.join(settings.cache_dir, 'icons'), 'c')
 
 
 def uninialize() -> NoReturn:
