@@ -33,7 +33,8 @@ def _filiter_exif(sinfo: str) -> Tuple[str, bool]:
 
 def _run_exif(cmds, fout):
     with tempfile.TemporaryFile(dir=temp_dir) as ferr:
-        result = subprocess.run(cmds, stdout=fout, stderr=ferr, timeout=100)
+        result = subprocess.run(cmds, stdout=fout, stderr=ferr, timeout=100,
+                                creationflags=subprocess.CREATE_NO_WINDOW)
         if result.returncode != 0:
             ferr.seek(0)
             serr = ferr.read().decode(encoding='UTF8', errors='ignore')
@@ -47,7 +48,8 @@ def extract_exif(fname: str) -> Tuple[str, Optional[bytes]]:
     img = None
     with tempfile.TemporaryFile(dir=temp_dir) as freport, tempfile.TemporaryFile(dir=temp_dir) as ferr:
         result = subprocess.run([exiftool_exe, '-h', '-charset', 'UTF8', fname],
-                                stdout=freport, stderr=ferr, timeout=100)
+                                stdout=freport, stderr=ferr, timeout=100,
+                                creationflags=subprocess.CREATE_NO_WINDOW)
         freport.seek(0)
         sinfo = freport.read().decode(encoding='UTF8', errors='ignore')
         sreport, has_thumbnail = _filiter_exif(sinfo)
@@ -59,7 +61,8 @@ def extract_exif(fname: str) -> Tuple[str, Optional[bytes]]:
     #     ferr.seek(0)
     #     with tempfile.TemporaryFile(dir=temp_dir) as fthumbnail:
     #         result = subprocess.run([exiftool_exe, '-b', '-ThumbnailImage', fname],
-    #                                 stdout=fthumbnail, stderr=ferr, timeout=100)
+    #                                 stdout=fthumbnail, stderr=ferr, timeout=100,
+    #                                 creationflags=subprocess.CREATE_NO_WINDOW)
     #         fthumbnail.seek(0)
     #         img = fthumbnail.read()
     #         if not sreport and result.returncode != 0:
