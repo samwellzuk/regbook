@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
-from typing import List, NoReturn
-
 import os
+from typing import List, NoReturn, Optional, Dict
+from dataclasses import dataclass, asdict, field, InitVar
 from hashlib import md5
+from datetime import datetime
+from bson import ObjectId
 
 from PyQt5.QtCore import QObject, pyqtSignal, QIODevice, QByteArray, QBuffer, Qt
 from PyQt5.QtGui import QImage
@@ -11,13 +13,54 @@ from PyQt5.QtGui import QImage
 import gridfs
 import pymongo
 
-from .model import VirFile, Member
+from .model import Member
 from .dbmgr import DBManager
 from comm.exiftool import extract_exif
 from comm.fileicon import query_file_icon
 from comm.vlctool import VlcExtractor
 
 from settings import qt_image_formats, best_thumbnail_width, vlc_video_formats
+
+
+@dataclass
+class VirFile:
+    filename: str
+    length: int
+    chunkSize: int
+    uploadDate: Optional[datetime]
+    _id: Optional[ObjectId] = None
+    metadata: InitVar[Dict] = None  # init var, to make exif thumbnail
+    owner_id: Optional[ObjectId] = field(init=False)
+    upload_user: Optional[str] = field(init=False)
+    md5: Optional[str] = field(init=False)
+    exif: Optional[str] = field(init=False)
+    thumbnail: Optional[bytes] = field(init=False)
+
+    def __post_init__(self, metadata):
+        self.owner_id = metadata['owner_id'] if 'owner_id' in metadata else None
+        self.upload_user = metadata['upload_user'] if 'upload_user' in metadata else None
+        self.md5 = metadata['md5'] if 'md5' in metadata else None
+        self.exif = metadata['exif'] if 'exif' in metadata else None
+        self.thumbnail = metadata['thumbnail'] if 'thumbnail' in metadata else None
+
+    def to_dict(self):
+        di = asdict(self)
+        di['metadata'] = {}
+        keys = ['owner_id', 'upload_user', 'md5', 'exif', 'thumbnail']
+        for key in keys:
+            if key in di:
+                val = di[key]
+                di.pop(key)
+                di['metadata'][key] = val
+        return di
+
+    def file_suffix(self):
+        basename = os.path.basename(self.filename)
+        parts = basename.split('.')
+        if len(parts) < 2 or not parts[0]:  # file name like : .ignored
+            return None
+        suffix = parts[-1].lower()
+        return f'.{suffix}' if suffix else None
 
 
 class VirFileService(QObject):

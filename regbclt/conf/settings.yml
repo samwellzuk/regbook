@@ -12,3 +12,18 @@ occupation:
   - Student
   - Businessman
   - Employee
+familyrole:
+  - Husband
+  - Wife
+  - Son
+  - Daughter
+language:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+meeting:
+  - 2017 special meeting
+  - 2018 special meeting
+  - 2019 special meeting

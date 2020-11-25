@@ -116,7 +116,7 @@ class Ui_MediaManagDlg(object):
     def retranslateUi(self, MediaManagDlg):
         _translate = QtCore.QCoreApplication.translate
         MediaManagDlg.setWindowTitle(_translate("MediaManagDlg", "Media Manage"))
-        self.ownerGbox.setTitle(_translate("MediaManagDlg", "Owner Name"))
+        self.ownerGbox.setTitle(_translate("MediaManagDlg", "Media Files"))
         self.exifGbox.setTitle(_translate("MediaManagDlg", "Exif Information"))
         self.label.setText(_translate("MediaManagDlg", "Rotate Thumbnail:"))
         self.refreshButton.setText(_translate("MediaManagDlg", "Refresh(&R)"))

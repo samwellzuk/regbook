@@ -4,32 +4,7 @@ import weakref
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt, pyqtSignal, QByteArray
 from PyQt5.QtGui import QPixmap
 
-_avatar_high = 130
-_avatar_width = 130
-
-_member_header = [
-    ('name', 260),
-    ('cname', 80),
-    ('sex', 60),
-    ('birthday', 120),
-    ('nation', 90),
-    ('street', 500),
-    ('city', 100),
-    ('province', 100),
-    ('homephone', 120),
-    ('workphone', 120),
-    ('cellphone', 120),
-    ('education', 120),
-    ('occupation', 200),
-    ('father', 200),
-    ('mother', 200),
-    ('saved', 100),
-    ('ledby', 200),
-    ('minister', 200),
-    ('baptizer', 200),
-    ('baptismday', 120),
-    ('venue', 250),
-]
+from data.model import head_high, head_width, get_flat_top_fields
 
 
 class MembersModel(QAbstractTableModel):
@@ -40,7 +15,7 @@ class MembersModel(QAbstractTableModel):
         self._avatar_default = QPixmap(":/images/thumbnail.png")
         self._models = []
         self._avatars = []
-        self._header = _member_header
+        self._header = get_flat_top_fields()
         self.sortkey = None
         self.sortorder = None
         self.view = None
@@ -50,8 +25,13 @@ class MembersModel(QAbstractTableModel):
             self.sortkey = None
             self.sortorder = None
         else:
-            self.sortkey = self._header[column - 1][0]
-            self.sortorder = order
+            k1, k2, fobj = self._header[column - 1]
+            if fobj.is_readonly():
+                self.sortkey = None
+                self.sortorder = None
+            else:
+                self.sortkey = f'{k1}.{k2}' if k2 else k1
+                self.sortorder = order
         self.sortChanged.emit()
 
     def rowCount(self, parent=QModelIndex(), *args, **kwargs):
@@ -66,7 +46,8 @@ class MembersModel(QAbstractTableModel):
         if orientation == Qt.Horizontal:
             if section == 0:
                 return 'avatar'
-            return self._header[section - 1][0]
+            k1, k2, _ = self._header[section - 1]
+            return f'{k1}.{k2}' if k2 else k1
         else:
             return int(section + 1)
 
@@ -76,29 +57,44 @@ class MembersModel(QAbstractTableModel):
         column = index.column()
         row = index.row()
         item = self._models[row]
-        if role == Qt.DecorationRole:
-            if column == 0:
+        if column == 0:
+            if role == Qt.DecorationRole:
                 if self._avatars[row]:
                     return self._avatars[row]
                 else:
                     return self._avatar_default
-        elif role == Qt.DisplayRole:
-            if column != 0:
-                key = self._header[column - 1][0]
-                val = getattr(item, key)
-                if column == 3+1:
-                    return val.strftime('%b/%d/%Y') if val else None
-                elif column == 19+1:
-                    return val.strftime('%b/%d/%Y') if val else None
+        else:
+            k1, k2, fobj = self._header[column - 1]
+            if role == Qt.DisplayRole:
+                obj = item
+                val = getattr(obj, k1)
+                if k2:
+                    obj = val
+                    val = getattr(obj, k2)
+                return fobj.outputobj.to_str(obj, val)
+            elif role == Qt.ToolTipRole:
+                return fobj.title
+            elif role == Qt.TextAlignmentRole:
+                if fobj.horizontal == 'left':
+                    aligrole = Qt.AlignLeft
+                elif fobj.horizontal == 'right':
+                    aligrole = Qt.AlignRight
                 else:
-                    return val
+                    aligrole = Qt.AlignHCenter
+                if fobj.vertical == 'top':
+                    aligrole |= Qt.AlignTop
+                elif fobj.vertical == 'bottom':
+                    aligrole |= Qt.AlignBottom
+                else:
+                    aligrole |= Qt.AlignVCenter
+                return aligrole
         return QVariant()
 
     def initView(self, tableView):
-        tableView.setColumnWidth(0, _avatar_width)  # name
-        for i in range(len(self._header)):
-            width = self._header[i][1]
-            tableView.setColumnWidth(i+1, width)
+        tableView.setColumnWidth(0, head_width)  # name
+        for i, item in enumerate(self._header):
+            _, _, fobj = item
+            tableView.setColumnWidth(i + 1, fobj.width)
         self.view = weakref.ref(tableView)
 
     def _update_high(self):
@@ -106,8 +102,8 @@ class MembersModel(QAbstractTableModel):
         if tableview:
             for i in range(len(self._models)):
                 h = tableview.rowHeight(i)
-                if h != _avatar_high:
-                    tableview.setRowHeight(i, _avatar_high)
+                if h != head_high:
+                    tableview.setRowHeight(i, head_high)
 
     def _load_pic(self, imgb):
         if imgb is None:
@@ -151,3 +147,23 @@ class MembersModel(QAbstractTableModel):
             self._avatars = []
         self.endResetModel()
         self._update_high()
+
+
+class ObjModel(QAbstractTableModel):
+    def __init__(self, model, headers, parent=None):
+        super().__init__(parent=parent)
+        self.model = model
+        self.headers = headers
+
+    def initView(self, tableView):
+        pass
+
+
+class ListModel(QAbstractTableModel):
+    def __init__(self, models, headers, parent=None):
+        super().__init__(parent=parent)
+        self.models = models
+        self.headers = headers
+
+    def initView(self, tableView):
+        pass

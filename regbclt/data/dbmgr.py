@@ -1,15 +1,38 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+from typing import List, NoReturn, Optional, Any, Dict
+from dataclasses import dataclass, field
+from uuid import UUID
 from hashlib import md5
-from typing import NoReturn, Optional
 
 import pymongo
 import pymongo.errors
 import pymongo.database
 
 from comm.singleton import Singleton
-from .model import User, admin_role, rw_role, change_self_role
+
+
+@dataclass
+class User:
+    user: str
+    password: Optional[str] = None
+    _id: Optional[str] = None
+    userId: Optional[UUID] = None
+    db: Optional[str] = None
+    roles: List[Dict[str, str]] = field(default_factory=list)
+    mechanisms: List[str] = field(default_factory=list)
+    customData: Any = None
+
+    def is_admin(self) -> bool:
+        for r in self.roles:
+            if r['role'] == admin_role:
+                return True
+        return False
+
+
+admin_role: str = "dbOwner"
+rw_role: str = "readWrite"
+change_self_role: str = "changeOwnPasswordCustomDataRole"
 
 _root_user: str = 'regbookroot'
 # 3d31cf4b17814ef982d50895de864814

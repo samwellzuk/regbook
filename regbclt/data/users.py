@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
-from typing import List, Optional, NoReturn
+from typing import List, NoReturn, Optional
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from .model import User, admin_role, rw_role, change_self_role
-
-from .dbmgr import DBManager
+from .dbmgr import DBManager, User, admin_role, rw_role, change_self_role
 
 
 class UserService(QObject):

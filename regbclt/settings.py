@@ -27,8 +27,9 @@ preview_max_filesz = 5 * 1024 * 1024
 best_thumbnail_width = 128
 
 _file_exist_list = []
+
 root_dir = os.path.normpath(os.getcwd())
-if not os.path.isfile(os.path.join(root_dir, "conf", "settings.yml")):
+if not os.path.isfile(os.path.join(root_dir, "conf", "member.yml")):
     root_dir = os.path.normpath(os.path.join(os.getcwd(), '..'))
 
 cache_dir = os.path.join(root_dir, 'cache')
@@ -43,19 +44,9 @@ temp_dir = os.path.join(root_dir, 'temp')
 if not os.path.isdir(temp_dir):
     os.makedirs(temp_dir, exist_ok=True)
 
-cities_yml = os.path.join(root_dir, "conf", "cities.yml")
-_file_exist_list.append(cities_yml)
-cities_dict = {}
-if os.path.isfile(cities_yml):
-    with codecs.open(cities_yml, mode='r', encoding="utf-8") as f:
-        cities_dict = yaml.load(f, Loader=yaml.FullLoader)
-
-settings_yml = os.path.join(root_dir, "conf", "settings.yml")
-_file_exist_list.append(settings_yml)
-config = {}
-if os.path.isfile(settings_yml):
-    with codecs.open(settings_yml, mode='r', encoding="utf-8") as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+conf_dir = os.path.join(root_dir, 'conf')
+member_yml = os.path.join(conf_dir, "member.yml")
+_file_exist_list.append(member_yml)
 
 qt_image_formats = set(['.' + s.data().decode() for s in QImageReader.supportedImageFormats()])
 

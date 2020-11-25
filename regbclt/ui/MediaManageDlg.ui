@@ -33,7 +33,7 @@
        </sizepolicy>
       </property>
       <property name="title">
-       <string>Owner Name</string>
+       <string>Media Files</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>

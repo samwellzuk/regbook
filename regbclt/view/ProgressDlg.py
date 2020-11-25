@@ -44,10 +44,10 @@ class ProgressDlg(QDialog, Ui_ProgressDlg):
         return True
 
     def exec(self) -> int:
-        raise NotImplemented('exec')
+        raise NotImplementedError('exec')
 
     def show(self):
-        raise NotImplemented('show')
+        raise NotImplementedError('show')
 
     def accept(self):
         return

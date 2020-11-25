@@ -6,7 +6,6 @@ Module implementing MemberManageView.
 import io
 import os
 from copy import copy
-from dataclasses import asdict
 from tempfile import mkstemp
 
 from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QStandardPaths
@@ -24,7 +23,7 @@ from data.members import MemberService
 from data.vfile import VirFileService
 
 from vm.members import MembersModel
-from vm.basereport import PersonReport
+from vm.reports import MemberReport
 
 from settings import tmpl_dir, temp_dir
 
@@ -47,7 +46,6 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         Constructor
         
         @param parent reference to the parent widget
-        @type QWidget
         """
         super(MemberManageView, self).__init__(parent)
         self.setupUi(self)
@@ -116,11 +114,11 @@ class MemberManageView(QWidget, Ui_MemberManageView):
             if not members:
                 QMessageBox.warning(self, 'Export', 'Query records is empty, nothing to export!')
                 return
-            report = PersonReport(members, 0)
+            report = MemberReport()
             report.progressUpdated.connect(self.progressdlg.setValue)
             report.progressTxtChanged.connect(self.progressdlg.setLabelText)
             try:
-                report.exportModel(excelfile, 'Members')
+                yield AsyncTask(report.exportModel, excelfile, members)
             finally:
                 report.progressUpdated.disconnect(self.progressdlg.setValue)
                 report.progressTxtChanged.disconnect(self.progressdlg.setLabelText)
@@ -182,8 +180,6 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         else:
             self._query_members()
 
-
-
     @pyqtSlot()
     @except_check
     def on_addButton_clicked(self):
@@ -221,7 +217,7 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         r = QMessageBox.question(
             self,
             'Warning',
-            f'Are you sure to delete {member.name} [{member.cname}]?\nAll media files will be delete too!')
+            'Are you sure to delete?\nAll media files will be delete too!')
         if r == QMessageBox.Yes:
             self._del_member(member)
             self._membersmodel.remove_model(index.row())
@@ -347,13 +343,7 @@ class MemberManageView(QWidget, Ui_MemberManageView):
             if not outdocx:
                 return
         personalimg = member.avatar
-        context = asdict(member)
-        context.pop('_id')
-        context.pop('_ts')
-        context.pop('thumbnail')
-        context.pop('avatar')
-        context.pop('photo')
-        context.pop('photofmt')
+        context = member.to_display_dict()
         doc = DocxTemplate(tmplfile)
         if avatarimg and personalimg:
             doc.replace_media(io.BytesIO(avatarimg), io.BytesIO(personalimg))

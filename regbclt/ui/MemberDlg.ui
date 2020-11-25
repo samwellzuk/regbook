@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>600</height>
+    <width>900</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Member information</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="dlgVerticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="baseHorizontalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="avatarGroupBox">
        <property name="title">
         <string>Avatar</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="avatarVerticalLayout">
         <item>
          <widget class="QLabel" name="avatarLabel">
           <property name="minimumSize">
@@ -45,7 +45,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="avatarHorizontalLayout">
           <item>
            <widget class="QPushButton" name="uploadButton">
             <property name="sizePolicy">
@@ -78,233 +78,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="infoGroupBox">
        <property name="title">
-        <string>Persion</string>
+        <string>Information</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>name</string>
-          </property>
-          <property name="buddy">
-           <cstring>nameEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="nameEdit"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>cname</string>
-          </property>
-          <property name="buddy">
-           <cstring>cnameEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLineEdit" name="cnameEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>sex</string>
-          </property>
-          <property name="buddy">
-           <cstring>sexBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="sexBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_19">
-          <property name="text">
-           <string>birthday</string>
-          </property>
-          <property name="buddy">
-           <cstring>birthdayDt</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QDateEdit" name="birthdayDt">
-          <property name="calendarPopup">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_11">
-          <property name="text">
-           <string>education</string>
-          </property>
-          <property name="buddy">
-           <cstring>educationBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="educationBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>father</string>
-          </property>
-          <property name="buddy">
-           <cstring>fatherEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QLineEdit" name="fatherEdit"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>occupation</string>
-          </property>
-          <property name="buddy">
-           <cstring>occupationBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QComboBox" name="occupationBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>mother</string>
-          </property>
-          <property name="buddy">
-           <cstring>motherEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="motherEdit"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>nation</string>
-          </property>
-          <property name="buddy">
-           <cstring>nationBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QComboBox" name="nationBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>homephone</string>
-          </property>
-          <property name="buddy">
-           <cstring>homephEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QLineEdit" name="homephEdit"/>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>province</string>
-          </property>
-          <property name="buddy">
-           <cstring>provinceBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QComboBox" name="provinceBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>workphone</string>
-          </property>
-          <property name="buddy">
-           <cstring>workphEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="3">
-         <widget class="QLineEdit" name="workphEdit"/>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>city</string>
-          </property>
-          <property name="buddy">
-           <cstring>cityBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QComboBox" name="cityBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>cellphone</string>
-          </property>
-          <property name="buddy">
-           <cstring>cellphEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="3">
-         <widget class="QLineEdit" name="cellphEdit"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>street</string>
-          </property>
-          <property name="buddy">
-           <cstring>streetEdit</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1" colspan="3">
-         <widget class="QLineEdit" name="streetEdit"/>
+       <layout class="QVBoxLayout" name="infoVerticalLayout">
+        <item>
+         <widget class="QTabWidget" name="infoTab"/>
         </item>
        </layout>
       </widget>
@@ -312,117 +92,52 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="listGroupBox">
      <property name="title">
-      <string>Church</string>
+      <string>List</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>ledby</string>
-        </property>
-        <property name="buddy">
-         <cstring>ledbyEdit</cstring>
-        </property>
-       </widget>
+     <layout class="QHBoxLayout" name="listHorizontalLayout">
+      <item>
+       <widget class="QTabWidget" name="listTab"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="ministerEdit"/>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLineEdit" name="baptizerEdit"/>
-      </item>
-      <item row="0" column="5">
-       <widget class="QDateEdit" name="baptismdayDt">
-        <property name="calendarPopup">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_15">
-        <property name="text">
-         <string>saved</string>
-        </property>
-        <property name="buddy">
-         <cstring>savedEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QLabel" name="label_16">
-        <property name="text">
-         <string>baptismday</string>
-        </property>
-        <property name="buddy">
-         <cstring>baptismdayDt</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_17">
-        <property name="text">
-         <string>minister</string>
-        </property>
-        <property name="buddy">
-         <cstring>ministerEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="savedEdit"/>
-      </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_20">
-        <property name="text">
-         <string>baptizer</string>
-        </property>
-        <property name="buddy">
-         <cstring>baptizerEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QLabel" name="label_21">
-        <property name="text">
-         <string>venue</string>
-        </property>
-        <property name="buddy">
-         <cstring>venueEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5">
-       <widget class="QLineEdit" name="venueEdit">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLineEdit" name="ledbyEdit"/>
+      <item>
+       <layout class="QVBoxLayout" name="listVerticalLayout">
+        <item>
+         <widget class="QPushButton" name="addButton">
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="delButton">
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>4</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="btnHorizontalLayout">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="btnHorizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -449,27 +164,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>nameEdit</tabstop>
-  <tabstop>cnameEdit</tabstop>
-  <tabstop>sexBox</tabstop>
-  <tabstop>birthdayDt</tabstop>
-  <tabstop>educationBox</tabstop>
-  <tabstop>occupationBox</tabstop>
-  <tabstop>fatherEdit</tabstop>
-  <tabstop>motherEdit</tabstop>
-  <tabstop>nationBox</tabstop>
-  <tabstop>provinceBox</tabstop>
-  <tabstop>cityBox</tabstop>
-  <tabstop>streetEdit</tabstop>
-  <tabstop>homephEdit</tabstop>
-  <tabstop>workphEdit</tabstop>
-  <tabstop>cellphEdit</tabstop>
-  <tabstop>savedEdit</tabstop>
-  <tabstop>ledbyEdit</tabstop>
-  <tabstop>baptismdayDt</tabstop>
-  <tabstop>ministerEdit</tabstop>
-  <tabstop>baptizerEdit</tabstop>
-  <tabstop>venueEdit</tabstop>
   <tabstop>uploadButton</tabstop>
  </tabstops>
  <resources>

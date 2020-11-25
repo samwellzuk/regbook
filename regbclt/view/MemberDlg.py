@@ -7,11 +7,11 @@ import os
 from pathlib import Path
 
 from PyQt5.QtCore import pyqtSlot, QByteArray, QStandardPaths
-from PyQt5.QtWidgets import QDialog, QFileDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog, QWidget, QVBoxLayout, QTableView, QAbstractItemView
 from PyQt5.QtGui import QPixmap, QImage
 
 from comm.utility import except_check
-from settings import config, cities_dict
+from data.model import get_write_top_fields, get_write_group_top_fields, get_write_group_list_fields
 
 from .ui_MemberDlg import Ui_MemberDlg
 from .PhotoEditorDlg import PhotoEditorDlg
@@ -31,50 +31,61 @@ class MemberDlg(QDialog, Ui_MemberDlg):
         """
         super(MemberDlg, self).__init__(parent)
         self.setupUi(self)
-        self.sexBox.addItems(config['sex'])
-        self.educationBox.addItems(config['education'])
-        self.occupationBox.addItems(config['occupation'])
-        self.nationBox.addItems(config['nation'])
 
-        self.provinceBox.addItems([k for k in cities_dict])
+        self.infotabs = {}
+        self.infovls = {}
+        self.infotabviews = {}
+        self.listtabs = {}
+        self.listvls = {}
+        self.listtabviews = {}
+
         self.member = member
 
-        self.nameEdit.setText(member.name)
-        self.cnameEdit.setText(member.cname)
-        self.sexBox.setCurrentText(member.sex)
-        if member.birthday:
-            self.birthdayDt.setDateTime(member.birthday)
-        self.nationBox.setCurrentText(member.nation)
-        self.provinceBox.setCurrentText(member.province)
-        self.cityBox.setCurrentText(member.city)
-        self.streetEdit.setText(member.street)
-        self.homephEdit.setText(member.homephone)
-        self.workphEdit.setText(member.workphone)
-        self.cellphEdit.setText(member.cellphone)
-        self.educationBox.setCurrentText(member.education)
-        self.occupationBox.setCurrentText(member.occupation)
-        self.fatherEdit.setText(member.father)
-        self.motherEdit.setText(member.mother)
-        self.savedEdit.setText(member.saved)
-        self.ledbyEdit.setText(member.ledby)
-        self.ministerEdit.setText(member.minister)
-        self.baptizerEdit.setText(member.baptizer)
-        if member.baptismday:
-            self.baptismdayDt.setDateTime(member.baptismday)
-        self.venueEdit.setText(member.venue)
-        if member.avatar:
-            b = QByteArray(member.avatar)
-            bmp = QPixmap()
-            bmp.loadFromData(b)
-            self.avatarLabel.setPixmap(bmp)
-        self.downloadButton.setEnabled(True if member.photo else False)
+        topfields = get_write_top_fields()
+        grouptop = get_write_group_top_fields()
+        grouplist = get_write_group_list_fields()
 
-    @pyqtSlot(str)
+    def add_info_tab(self, name):
+        index = len(self.infotabs)
+        tab = QWidget()
+        tab.setObjectName(f"info_tab{index}")
+        verticalLayout = QVBoxLayout(tab)
+        verticalLayout.setObjectName(f"info_verticalLayout{index}")
+        tableView = QTableView(tab)
+        tableView.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        tableView.setObjectName(f"info_tableView{index}")
+        verticalLayout.addWidget(tableView)
+        self.infoTab.addTab(tab, name)
+        self.infotabs[name] = tab
+        self.infovls[name] = verticalLayout
+        self.infotabviews[name] = tableView
+        return tableView
+
+    def add_list_tab(self, name):
+        index = len(self.listtabs)
+        tab = QWidget()
+        tab.setObjectName(f"list_tab{index}")
+        verticalLayout = QVBoxLayout(tab)
+        verticalLayout.setObjectName(f"list_verticalLayout{index}")
+        tableView = QTableView(tab)
+        tableView.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        tableView.setObjectName(f"list_tableView{index}")
+        verticalLayout.addWidget(tableView)
+        self.listTab.addTab(tab, name)
+        self.listtabs[name] = tab
+        self.listvls[name] = verticalLayout
+        self.listtabviews[name] = tableView
+        return tableView
+
+    @pyqtSlot()
     @except_check
-    def on_provinceBox_currentTextChanged(self, province):
-        self.cityBox.clear()
-        if province in cities_dict:
-            self.cityBox.addItems(cities_dict[province])
+    def on_addButton_clicked(self):
+        pass
+
+    @pyqtSlot()
+    @except_check
+    def on_delButton_clicked(self):
+        pass
 
     @pyqtSlot()
     @except_check
@@ -120,25 +131,4 @@ class MemberDlg(QDialog, Ui_MemberDlg):
     @pyqtSlot()
     @except_check
     def accept(self):
-        self.member.name = self.nameEdit.text()
-        self.member.cname = self.cnameEdit.text()
-        self.member.sex = self.sexBox.currentText()
-        self.member.birthday = self.birthdayDt.dateTime().toPyDateTime()
-        self.member.nation = self.nationBox.currentText()
-        self.member.province = self.provinceBox.currentText()
-        self.member.city = self.cityBox.currentText()
-        self.member.street = self.streetEdit.text()
-        self.member.homephone = self.homephEdit.text()
-        self.member.workphone = self.workphEdit.text()
-        self.member.cellphone = self.cellphEdit.text()
-        self.member.education = self.educationBox.currentText()
-        self.member.occupation = self.occupationBox.currentText()
-        self.member.father = self.fatherEdit.text()
-        self.member.mother = self.motherEdit.text()
-        self.member.saved = self.savedEdit.text()
-        self.member.ledby = self.ledbyEdit.text()
-        self.member.minister = self.ministerEdit.text()
-        self.member.baptizer = self.baptizerEdit.text()
-        self.member.baptismday = self.baptismdayDt.dateTime().toPyDateTime()
-        self.member.venue = self.venueEdit.text()
         super(MemberDlg, self).accept()

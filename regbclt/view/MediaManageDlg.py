@@ -61,8 +61,6 @@ class MediaManageDlg(QDialog, Ui_MediaManagDlg):
         self.svc.progressErrChanged.connect(self.progressdlg.addErrorText)
         self.svc.progressStepUpdated.connect(self.progressdlg.setStepValue)
         self.svc.progressStepTxtChanged.connect(self.progressdlg.setStepLabelText)
-
-        self.ownerGbox.setTitle(member.name)
         self._refresh_vfs()
 
     def _get_preview_type(self, vf):

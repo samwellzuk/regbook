@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
 from typing import List, Optional, NoReturn, Tuple
-from enum import Enum
 from datetime import datetime
-from dataclasses import asdict
 import pymongo
 
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
@@ -57,7 +55,7 @@ class MemberService(QObject):
     def add_member(self, member: Member) -> Member:
         self.progressTxtChanged.emit('Inserting member...')
         self.progressUpdated.emit(0)
-        doc = asdict(member)
+        doc = member.to_db_dict()
         doc.pop('_id')
         doc['_ts'] = datetime.now()
         coll = DBManager().get_db().get_collection('members')
@@ -79,10 +77,10 @@ class MemberService(QObject):
     def update_member(self, oldm: Member, newm: Member) -> Member:
         self.progressTxtChanged.emit('Inserting member...')
         self.progressUpdated.emit(0)
-        olddi = asdict(oldm)
+        olddi = oldm.to_db_dict()
         olddi.pop('_id')
         olddi.pop('_ts')
-        newdi = asdict(newm)
+        newdi = newm.to_db_dict()
         newdi.pop('_id')
         newdi.pop('_ts')
         changedi = {}

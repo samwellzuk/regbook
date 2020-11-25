@@ -1,0 +1,618 @@
+inputs:
+  instr:
+    class: QLineEdit
+  insex:
+    class: QComboBox
+    editable: False
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['sex']"
+  indate:
+    class: QDateEdit
+    calendar: True
+    displayfmt: "yyyy/M/d"
+  inheight:
+    class: QLineEdit
+    validator:
+      class: QDoubleValidator
+      bottom: 0.00
+      top: 10.00
+      decimals: 2
+      notation: 0 # 0 or 1
+  inweight:
+    class: QLineEdit
+    validator:
+      class: QDoubleValidator
+      bottom: 0.00
+      top: 500.00
+      decimals: 2
+      notation: 0 # 0 or 1
+  innation:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['nation']"
+  inlang:
+    class: QComboBox
+    editable: False
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['language']"
+  ineduc:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['education']"
+  inoccu:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['occupation']"
+  inrole:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['familyrole']"
+  inregion:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: cities.yml
+      function: "lambda self, di : [k for k in di]"
+  indistr:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: cities.yml
+      function: "lambda self, di : di[self.region] if self.region in di else []"
+  inwdistr:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: cities.yml
+      function: "lambda self, di : di[self.wregion] if self.wregion in di else []"
+  inmeet:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['meeting']"
+  example1:
+    class: QLineEdit
+    validator:
+      class: QIntValidator
+      minimum: 1
+      maximum: 100
+  example2:
+    class: QLineEdit
+    validator:
+      class: QDoubleValidator
+      bottom: 1.00
+      top: 100.00
+      decimals: 2
+      notation: 0 # 0 or 1
+  example3:
+    class: QLineEdit
+    validator:
+      class: QRegExpValidator
+      pattern: "[A-C]\\d{5}[W-Z]"
+      cs: 0 # 0 or 1
+      syntax: 0 # 0 RegExp
+                # 1 Wildcard
+                # 2 FixedString
+                # 3 RegExp2
+                # 4 WildcardUnix
+                # 5 W3CXmlSchema11
+  example4:
+    class: QLineEdit
+    validator:
+      class: QRegularExpressionValidator
+      pattern: "^(?<date>\\d\\d)/(?<month>\\d\\d)/(?<year>\\d\\d\\d\\d)$"
+      options: 0 # 0x0000 NoPatternOption
+                 # 0x0001 CaseInsensitiveOption
+                 # 0x0002 DotMatchesEverythingOption
+                 # 0x0004 MultilineOption
+                 # 0x0008 ExtendedPatternSyntaxOption
+                 # 0x0010 InvertedGreedinessOption
+                 # 0x0020 DontCaptureOption
+                 # 0x0040 UseUnicodePropertiesOption
+                 # 0x0080 OptimizeOnFirstUsageOption
+                 # 0x0100 DontAutomaticallyOptimizeOption
+  example5:
+    class: QLineEdit
+    validator:
+      class: inputMask
+      inputMask: "000.000.000.000;_"
+  example6:
+    class: QCheckBox
+  example7:
+    class: QComboBox
+    editable: True
+    items:
+      - male
+      - female
+  example71:
+    class: QComboBox
+    editable: True
+    items:
+      class: lambda
+      ymlfile: settings.yml
+      function: "lambda self, di : di['meeting']"
+      modoules: 
+        - datetime
+  example8:
+    class: QSpinBox
+    minimum: 1
+    maximum: 100
+    step: 1
+    intbase: 10
+    suffix:
+    prefix:
+  example9:
+    class: QDoubleSpinBox
+    minimum: 0.00
+    maximum: 99.99
+    step: 1.0
+    decimals: 2
+    suffix:
+    prefix:
+  example10:
+    class: QTimeEdit
+    displayfmt: "H:mm"
+  example11:
+    class: QDateEdit
+    calendar: True
+    displayfmt: "yyyy/M/d"
+  example12:
+    class: QDateTimeEdit
+    calendar: True
+    displayfmt: "yyyy/M/d H:mm"
+outputs:
+  outstr:
+    class: format
+    format: "{}"
+  outdate:
+    class: format
+    format: "{:%Y/%m/%d}"
+  outfloat:
+    class: format
+    format: "{:.2}"
+  outbool:
+    class: lambda
+    function: "lambda self, value : 'Yes' if value else 'No'"
+  outage:
+    class: lambda
+    function: "lambda self, value : int((datetime.datetime.now()-self.birth).days/365) if self.birth else None"
+    modoules: 
+      - datetime
+  outlenght:
+    class: lambda
+    function: "lambda self, value : len(self.meet) if self.meet else 0"
+classes:
+  Person:
+    name:
+      type: str # bool str datetime int float
+      default:
+      title: full name
+      width: 260
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    nick:
+      type: str
+      default:
+      title: nick name
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    cname:
+      type: str
+      default:
+      title: chinese name
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    sex:
+      type: str
+      default:
+      title: sex
+      width: 60
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: insex
+      output: outstr
+    birth:
+      type: datetime
+      default:
+      title: birth day
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: indate
+      output: outdate
+    age:
+      type: int
+      default:
+      title: age
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: # don't have input, mean calculated field , don't save to db
+      output: outage
+    height:
+      type: float
+      default:
+      title: height(meter)
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inheight
+      output: outfloat
+    weight:
+      type: float
+      default:
+      title: weight(kg)
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inweight
+      output: outfloat
+  Relation:
+    nation:
+      type: str
+      default:
+      title: nation
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: innation
+      output: outstr
+    cnlang:
+      type: str
+      default:
+      title: Chinese Language
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inlang
+      output: outstr
+    education:
+      type: str
+      default:
+      title: education
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: ineduc
+      output: outstr
+    occupation:
+      type: str
+      default:
+      title: occupation
+      width: 200
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inoccu
+      output: outstr
+    plateno:
+      type: str
+      default:
+      title: plate number
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    family:
+      type: str
+      default:
+      title: family id
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    role:
+      type: str
+      default:
+      title: family role
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inrole
+      output: outstr
+    father:
+      type: str
+      default:
+      title: father name
+      width: 200
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    mother:
+      type: str
+      default:
+      title: mother name
+      width: 200
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+  Address:
+    cellphone:
+      type: str
+      default:
+      title: cellphone
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    landline:
+      type: str
+      default:
+      title: landline
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    region:
+      type: str
+      default:
+      title: region
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inregion
+      output: outstr
+    district:
+      type: str
+      default:
+      title: district
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: indistr
+      output: outstr
+    street:
+      type: str
+      default:
+      title: street
+      width: 500
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    wlandline:
+      type: str
+      default:
+      title: work landline
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    wregion:
+      type: str
+      default:
+      title: work region
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inregion
+      output: outstr
+    wdistrict:
+      type: str
+      default:
+      title: work district
+      width: 100
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inwdistr
+      output: outstr
+    wstreet:
+      type: str
+      default:
+      title: work street
+      width: 500
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+  Church:
+    group:
+      type: str
+      default:
+      title: group
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    state:
+      type: str
+      default:
+      title: state
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    layhand:
+      type: datetime
+      default:
+      title: layhand day
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: indate
+      output: outdate
+    baptism:
+      type: datetime
+      default:
+      title: baptism day
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: indate
+      output: outdate
+    minister:
+      type: str
+      default:
+      title: minister
+      width: 200
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    baptizer:
+      type: str
+      default:
+      title: baptizer
+      width: 200
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+    venue:
+      type: str
+      default:
+      title: venue
+      width: 250
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: instr
+      output: outstr
+  Meet:
+    name:
+      type: str
+      default:
+      title: meeting name
+      width: 500
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inmeet
+      output: outstr
+  Test:
+    tname:
+      type: str
+      default: ""
+      title: meeting name
+      width: 500
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inmeet
+      output: outstr
+    tlayhand:
+      type: datetime
+      default: 2000-01-01 00:00:00
+      title: layhand day
+      width: 120
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: indate
+      output: outdate
+    theight:
+      type: float
+      default: 0.0
+      title: height(meter)
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inheight
+      output: outfloat
+    twidth:
+      type: int
+      default: 0
+      title: width(meter)
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inheight
+      output: outstr
+    tischeck:
+      type: bool
+      default: True
+      title: width(meter)
+      width: 80
+      horizontal: left # left center right
+      vertical: center # top center bottom
+      blod: False
+      input: inheight
+      output: outstr
+obj:
+  base: Person
+  rel: Relation
+  adr: Address
+  chu: Church
+  meet: 
+    - Meet
+  meetlen:
+    type: int
+    default:
+    title: meet lenght
+    width: 80
+    horizontal: left # left center right
+    vertical: center # top center bottom
+    blod: False
+    input: # read only
+    output: outlenght

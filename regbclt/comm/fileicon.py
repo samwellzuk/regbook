@@ -119,7 +119,7 @@ def _get_all_type() -> List[str]:
 
 
 def scan_register() -> NoReturn:
-    assert _icons_db == None
+    assert _icons_db is None
     settings.initialize()
     initialize()
     try:

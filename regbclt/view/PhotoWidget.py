@@ -8,13 +8,8 @@ from PyQt5.QtGui import QPixmap, QPen, QPainter, QColor, QImage, QTransform, QRe
     QMouseEvent, QPaintEvent, QWheelEvent
 from comm.utility import except_check
 
-_head_margin = 0.05
-_head_width_max = 128
-_head_highet_max = 128
-_avatar_ratio = 1.4
-_avatar_margin = 0.05
-_avatar_width_max = 750
-_avatar_highet_max = 1050
+from data.model import head_margin, head_width_max, head_highet_max, \
+    avatar_ratio, avatar_margin, avatar_width_max, avatar_highet_max
 
 
 class PhotoWidget(QWidget):
@@ -41,18 +36,18 @@ class PhotoWidget(QWidget):
         # avatar 图片超过范围,需要压缩
         wimg = imgavatar.width()
         himg = imgavatar.height()
-        if wimg > _avatar_width_max or himg > _avatar_highet_max:
+        if wimg > avatar_width_max or himg > avatar_highet_max:
             r = himg / wimg
             if r > 1.4:
-                imgavatar = imgavatar.scaledToHeight(_avatar_highet_max, Qt.SmoothTransformation)
+                imgavatar = imgavatar.scaledToHeight(avatar_highet_max, Qt.SmoothTransformation)
             else:
-                imgavatar = imgavatar.scaledToWidth(_avatar_width_max, Qt.SmoothTransformation)
+                imgavatar = imgavatar.scaledToWidth(avatar_width_max, Qt.SmoothTransformation)
         # head
-        dstimg = QImage(_head_width_max, _head_highet_max, QImage.Format_ARGB4444_Premultiplied)
+        dstimg = QImage(head_width_max, head_highet_max, QImage.Format_ARGB4444_Premultiplied)
         dstimg.fill(Qt.transparent)
         painter = QPainter()
         if painter.begin(dstimg):
-            dstrect = QRect(0, 0, _head_width_max, _head_highet_max)
+            dstrect = QRect(0, 0, head_width_max, head_highet_max)
             srcrect = QRect(0, 0, imghead.width(), imghead.height())
             region = QRegion(dstrect, QRegion.Ellipse)
             painter.setClipRegion(region)
@@ -78,8 +73,8 @@ class PhotoWidget(QWidget):
         self.offsetpt = QPointF(0, 0)
 
     def _get_headport(self, vp: QRectF) -> QRectF:
-        dx = vp.width() * _head_margin
-        dy = vp.height() * _head_margin
+        dx = vp.width() * head_margin
+        dy = vp.height() * head_margin
         recthd = QRectF(vp.x(), vp.y(), vp.width(), vp.width())
         recthd.adjust(dx, dy, -dx, -dy)
         return recthd
@@ -88,13 +83,13 @@ class PhotoWidget(QWidget):
         winw = self.width() * 1.0
         winh = self.height() * 1.0
         ratio = winh / winw
-        if ratio > _avatar_ratio:
-            tmpw = winw * (1 - _avatar_margin * 2)
+        if ratio > avatar_ratio:
+            tmpw = winw * (1 - avatar_margin * 2)
             rectw = tmpw
-            recth = tmpw * _avatar_ratio
+            recth = tmpw * avatar_ratio
         else:
-            tmph = winh * (1 - _avatar_margin * 2)
-            rectw = tmph / _avatar_ratio
+            tmph = winh * (1 - avatar_margin * 2)
+            rectw = tmph / avatar_ratio
             recth = tmph
         rectvp = QRectF((winw - rectw) / 2, (winh - recth) / 2, rectw, recth)
         return rectvp
@@ -103,11 +98,11 @@ class PhotoWidget(QWidget):
         imgw = self.orgpix.width() * 1.0
         imgh = self.orgpix.height() * 1.0
         ratio = imgh / imgw
-        if ratio > _avatar_ratio:
+        if ratio > avatar_ratio:
             rectw = imgw
-            recth = imgw * _avatar_ratio
+            recth = imgw * avatar_ratio
         else:
-            rectw = imgh / _avatar_ratio
+            rectw = imgh / avatar_ratio
             recth = imgh
         rectwinp = QRectF(-(rectw / 2), -(recth / 2), rectw, recth)
         return rectwinp
