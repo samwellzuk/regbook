@@ -29,7 +29,6 @@ class RestPwdDlg(QDialog, Ui_RestPwdDlg):
         self.snewpwd = None
         self.sconfirm = None
 
-    @except_check
     def state_change(self):
         self.snewpwd = self.newpwd.text()
         self.sconfirm = self.confirmpwd.text()
@@ -39,21 +38,11 @@ class RestPwdDlg(QDialog, Ui_RestPwdDlg):
             self.okButton.setEnabled(False)
 
     @pyqtSlot(str)
+    @except_check
     def on_newpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()
 
     @pyqtSlot(str)
+    @except_check
     def on_confirmpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()

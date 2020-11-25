@@ -33,16 +33,14 @@ class LoginDlg(QDialog, Ui_LoginDlg):
         self.progressdlg = ProgressDlg(parent=self)
         self.username.setFocus()
 
-    @except_check
     def _check_status(self):
         sip = self.server.text()
         suser = self.username.text()
         spwd = self.password.text()
         self.okButton.setEnabled(True if sip and suser and spwd else False)
 
-    @pyqtSlot()
     @coroutine(is_block=True)
-    def accept(self):
+    def _accept(self):
         sip = self.server.text()
         suser = self.username.text()
         spwd = self.password.text()
@@ -74,32 +72,21 @@ class LoginDlg(QDialog, Ui_LoginDlg):
             QMessageBox.warning(self, 'Warning', str(e))
             self.progressdlg.close()
 
+    @except_check
+    def accept(self, bok):
+        self._accept()
+
     @pyqtSlot(str)
+    @except_check
     def on_server_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self._check_status()
 
     @pyqtSlot(str)
+    @except_check
     def on_username_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self._check_status()
 
     @pyqtSlot(str)
+    @except_check
     def on_password_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self._check_status()

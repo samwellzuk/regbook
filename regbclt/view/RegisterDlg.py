@@ -29,7 +29,6 @@ class RegisterDlg(QDialog, Ui_RegisterDlg):
         self.spwd = None
         self.bisadmin = False
 
-    @except_check
     def state_change(self):
         self.suser = self.username.text()
         self.bisadmin = self.isadmin.checkState() == Qt.Checked
@@ -41,31 +40,16 @@ class RegisterDlg(QDialog, Ui_RegisterDlg):
             self.okButton.setEnabled(False)
 
     @pyqtSlot(str)
+    @except_check
     def on_username_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()
 
     @pyqtSlot(str)
+    @except_check
     def on_pwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()
 
     @pyqtSlot(str)
+    @except_check
     def on_confirmpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()

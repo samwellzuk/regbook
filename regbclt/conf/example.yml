@@ -17,7 +17,7 @@ inputs:
     validator:
       class: QDoubleValidator
       bottom: 0.00
-      top: 10.00
+      top: 99.00
       decimals: 2
       notation: 0 # 0 or 1
   inweight:
@@ -25,7 +25,7 @@ inputs:
     validator:
       class: QDoubleValidator
       bottom: 0.00
-      top: 500.00
+      top: 999.00
       decimals: 2
       notation: 0 # 0 or 1
   innation:
@@ -152,7 +152,7 @@ inputs:
       class: lambda
       ymlfile: settings.yml
       function: "lambda self, di : di['meeting']"
-      modoules: 
+      modules: 
         - datetime
   example8:
     class: QSpinBox
@@ -197,7 +197,7 @@ outputs:
   outage:
     class: lambda
     function: "lambda self, value : int((datetime.datetime.now()-self.birth).days/365) if self.birth else None"
-    modoules: 
+    modules: 
       - datetime
   outlenght:
     class: lambda

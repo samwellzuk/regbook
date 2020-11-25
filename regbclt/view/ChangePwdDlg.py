@@ -31,7 +31,6 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
         self.spwd = None
         self.sconfirm = None
 
-    @except_check
     def state_change(self):
         self.soldpwd = self.oldpwd.text()
         self.spwd = self.newpwd.text()
@@ -42,31 +41,16 @@ class ChangePwdDlg(QDialog, Ui_ChangePwdDlg):
             self.okButton.setEnabled(False)
 
     @pyqtSlot(str)
+    @except_check
     def on_oldpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()
 
     @pyqtSlot(str)
+    @except_check
     def on_newpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()
 
     @pyqtSlot(str)
+    @except_check
     def on_confirmpwd_textChanged(self, p0):
-        """
-        Slot documentation goes here.
-        
-        @param p0 DESCRIPTION
-        @type str
-        """
         self.state_change()

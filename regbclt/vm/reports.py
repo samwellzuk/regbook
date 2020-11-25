@@ -7,6 +7,7 @@ from pyexcelerate import Workbook, Style, Color, Alignment, Font
 from pyexcelerate.Range import Range
 import win32api
 
+from comm.utility import except_check
 from data.model import get_flat_top_fields, get_group_list_fields
 
 
@@ -19,11 +20,9 @@ class BaseModel(ABC):
     def column_count(self):
         raise NotImplementedError('column_count')
 
-    @abstractmethod
     def table_title_count(self):
         return 0
 
-    @abstractmethod
     def merge_cell(self):
         """
         :return: row, col, rowcount, colcount
@@ -77,16 +76,16 @@ class TopModel(BaseModel):
         if row == 0:
             return True, 'center', 'center'
         elif column == 0:
-            return False, 'right', 'center'
+            return False, 'left', 'center'
         else:
             _, _, fobj = self.headers[column - 1]
             return fobj.blod, fobj.horizontal, fobj.vertical
 
     def column_width(self, column):
         if column == 0:
-            return 50
+            return 5
         _, _, fobj = self.headers[column - 1]
-        return fobj.width
+        return fobj.width // 10
 
 
 class ListModel(BaseModel):
@@ -132,16 +131,16 @@ class ListModel(BaseModel):
         if row == 0:
             return True, 'center', 'center'
         elif column == 0:
-            return False, 'right', 'center'
+            return False, 'left', 'center'
         else:
             _, fobj = self.headers[column - 1]
             return fobj.blod, fobj.horizontal, fobj.vertical
 
     def column_width(self, column):
         if column == 0:
-            return 50
+            return 5
         _, fobj = self.headers[column - 1]
-        return fobj.width
+        return fobj.width // 10
 
 
 class MemberReport(QObject):

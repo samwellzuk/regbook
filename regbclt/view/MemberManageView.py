@@ -5,7 +5,7 @@ Module implementing MemberManageView.
 """
 import io
 import os
-from copy import copy
+from copy import deepcopy
 from tempfile import mkstemp
 
 from PyQt5.QtCore import pyqtSlot, QModelIndex, Qt, QStandardPaths
@@ -193,7 +193,7 @@ class MemberManageView(QWidget, Ui_MemberManageView):
     def on_baseView_doubleClicked(self, clickindex):
         oldmem = self._membersmodel.get_model(clickindex.row())
         self._query_photo(oldmem)
-        dlg = MemberDlg(copy(oldmem), parent=self)
+        dlg = MemberDlg(deepcopy(oldmem), parent=self)
         if dlg.exec() == MemberDlg.Accepted:
             member = self.svc.update_member(oldmem, dlg.member)
             self._membersmodel.update_model(clickindex.row(), member)
@@ -204,7 +204,7 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         index = self._selectmodel.currentIndex()
         oldmem = self._membersmodel.get_model(index.row())
         self._query_photo(oldmem)
-        dlg = MemberDlg(copy(oldmem), parent=self)
+        dlg = MemberDlg(deepcopy(oldmem), parent=self)
         if dlg.exec() == MemberDlg.Accepted:
             member = self.svc.update_member(oldmem, dlg.member)
             self._membersmodel.update_model(index.row(), member)

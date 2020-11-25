@@ -6,12 +6,14 @@ Module implementing RestPwdDlg.
 import os
 from pathlib import Path
 
-from PyQt5.QtCore import pyqtSlot, QByteArray, QStandardPaths
+from PyQt5.QtCore import pyqtSlot, QByteArray, QStandardPaths, Qt
 from PyQt5.QtWidgets import QDialog, QFileDialog, QWidget, QVBoxLayout, QTableView, QAbstractItemView
 from PyQt5.QtGui import QPixmap, QImage
 
 from comm.utility import except_check
-from data.model import get_write_top_fields, get_write_group_top_fields, get_write_group_list_fields
+from data.model import get_write_top_fields, get_write_group_top_fields, get_write_group_list_fields, get_class_object
+from vm.delegate import CustomDelegate
+from vm.members import ListModel, ObjModel
 
 from .ui_MemberDlg import Ui_MemberDlg
 from .PhotoEditorDlg import PhotoEditorDlg
@@ -32,21 +34,59 @@ class MemberDlg(QDialog, Ui_MemberDlg):
         super(MemberDlg, self).__init__(parent)
         self.setupUi(self)
 
-        self.infotabs = {}
-        self.infovls = {}
-        self.infotabviews = {}
-        self.listtabs = {}
-        self.listvls = {}
-        self.listtabviews = {}
-
+        self.info_tabs = {}
+        self.info_vls = {}
+        self.info_tabviews = {}
+        self.info_vm = {}
+        self.list_tabs = {}
+        self.list_vls = {}
+        self.list_tabviews = {}
+        self.list_vm = {}
         self.member = member
 
         topfields = get_write_top_fields()
+        if topfields:
+            obj = member
+            name = 'Top Field'
+            self.init_infovm(name, topfields, obj)
         grouptop = get_write_group_top_fields()
+        for k in grouptop:
+            field, cls = k
+            fields = grouptop[k]
+            obj = getattr(member, field)
+            self.init_infovm(cls, fields, obj)
         grouplist = get_write_group_list_fields()
+        for k in grouplist:
+            field, cls = k
+            fields = grouplist[k]
+            objs = getattr(member, field)
+            self.init_listvm(cls, fields, objs)
+
+        if member.avatar:
+            b = QByteArray(member.avatar)
+            bmp = QPixmap()
+            bmp.loadFromData(b)
+            self.avatarLabel.setPixmap(bmp)
+        self.downloadButton.setEnabled(True if member.photo else False)
+
+    def init_infovm(self, name, fields, obj):
+        vm = ObjModel(obj, fields, parent=self)
+        view = self.add_info_tab(name)
+        view.setItemDelegate(CustomDelegate(self))
+        view.setModel(vm)
+        vm.initView(view)
+        self.info_vm[name] = vm
+
+    def init_listvm(self, name, fields, objs):
+        vm = ListModel(objs, fields, parent=self)
+        view = self.add_list_tab(name)
+        view.setItemDelegate(CustomDelegate(self))
+        view.setModel(vm)
+        vm.initView(view)
+        self.list_vm[name] = vm
 
     def add_info_tab(self, name):
-        index = len(self.infotabs)
+        index = len(self.info_tabs)
         tab = QWidget()
         tab.setObjectName(f"info_tab{index}")
         verticalLayout = QVBoxLayout(tab)
@@ -56,13 +96,13 @@ class MemberDlg(QDialog, Ui_MemberDlg):
         tableView.setObjectName(f"info_tableView{index}")
         verticalLayout.addWidget(tableView)
         self.infoTab.addTab(tab, name)
-        self.infotabs[name] = tab
-        self.infovls[name] = verticalLayout
-        self.infotabviews[name] = tableView
+        self.info_tabs[name] = tab
+        self.info_vls[name] = verticalLayout
+        self.info_tabviews[name] = tableView
         return tableView
 
     def add_list_tab(self, name):
-        index = len(self.listtabs)
+        index = len(self.list_tabs)
         tab = QWidget()
         tab.setObjectName(f"list_tab{index}")
         verticalLayout = QVBoxLayout(tab)
@@ -72,20 +112,35 @@ class MemberDlg(QDialog, Ui_MemberDlg):
         tableView.setObjectName(f"list_tableView{index}")
         verticalLayout.addWidget(tableView)
         self.listTab.addTab(tab, name)
-        self.listtabs[name] = tab
-        self.listvls[name] = verticalLayout
-        self.listtabviews[name] = tableView
+        self.list_tabs[name] = tab
+        self.list_vls[name] = verticalLayout
+        self.list_tabviews[name] = tableView
         return tableView
 
     @pyqtSlot()
     @except_check
     def on_addButton_clicked(self):
-        pass
+        name = self.listTab.tabText(self.listTab.currentIndex())
+        clsdef = get_class_object(name)
+        obj = clsdef()
+        vm = self.list_vm[name]
+        view = self.list_tabviews[name]
+        row = vm.count_model()
+        vm.add_model(obj, row)
+        index = vm.index(row, 0)
+        view.setCurrentIndex(index)
+        view.edit(index)
 
     @pyqtSlot()
     @except_check
     def on_delButton_clicked(self):
-        pass
+        name = self.listTab.tabText(self.listTab.currentIndex())
+        view = self.list_tabviews[name]
+        index = view.currentIndex()
+        if index.isValid():
+            row = index.row()
+            vm = self.list_vm[name]
+            vm.remove_model(row)
 
     @pyqtSlot()
     @except_check
@@ -128,7 +183,8 @@ class MemberDlg(QDialog, Ui_MemberDlg):
                 self.avatarLabel.setPixmap(bmp)
                 self.downloadButton.setEnabled(True)
 
-    @pyqtSlot()
-    @except_check
-    def accept(self):
-        super(MemberDlg, self).accept()
+    def keyPressEvent(self, evt):
+        key = evt.key()
+        if key == Qt.Key_Enter or key == Qt.Key_Return or key == Qt.Key_Escape:
+            return
+        super(MemberDlg, self).keyPressEvent(evt)

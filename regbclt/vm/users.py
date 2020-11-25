@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Created by samwell
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
+from comm.utility import except_check
 
 
 class UsersModel(QAbstractTableModel):
@@ -12,30 +13,33 @@ class UsersModel(QAbstractTableModel):
             'Is Admin',
         ]
 
+    @except_check
     def rowCount(self, parent=QModelIndex(), *args, **kwargs):
         return len(self._models)
 
+    @except_check
     def columnCount(self, parent=QModelIndex(), *args, **kwargs):
         return len(self._header)
 
+    @except_check
     def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role != Qt.DisplayRole:
-            return None
-        if orientation == Qt.Horizontal:
-            return self._header[section]
-        else:
-            return int(section + 1)
-
-    def data(self, index, role=Qt.DisplayRole):
-        if not index.isValid() or not (0 <= index.row() < len(self._models)):
-            return QVariant()
-        column = index.column()
-        item = self._models[index.row()]
         if role == Qt.DisplayRole:
-            if column == 0:
-                return item.user
-            elif column == 1:
-                return 'Yes' if item.is_admin() else ''
+            if orientation == Qt.Horizontal:
+                return self._header[section]
+            else:
+                return int(section + 1)
+        return super(UsersModel, self).headerData(section, orientation, role)
+
+    @except_check
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            column = index.column()
+            item = self._models[index.row()]
+            if role == Qt.DisplayRole:
+                if column == 0:
+                    return item.user
+                elif column == 1:
+                    return 'Yes' if item.is_admin() else ''
         return QVariant()
 
     def initView(self, tableView):
@@ -65,4 +69,3 @@ class UsersModel(QAbstractTableModel):
         self.beginResetModel()
         self._models = [] if mlist is None else mlist
         self.endResetModel()
-

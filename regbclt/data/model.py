@@ -2,7 +2,7 @@
 # Created by samwell
 import os
 from typing import Dict, Any, Optional, List, NoReturn, Tuple
-from collections import namedtuple
+from dataclasses import make_dataclass, asdict
 from datetime import datetime
 from abc import ABC, abstractmethod
 from importlib import import_module
@@ -10,7 +10,7 @@ from importlib import import_module
 from PyQt5.QtWidgets import QCheckBox, QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QTimeEdit, QDateEdit, \
     QDateTimeEdit, QWidget
 from PyQt5.QtGui import QIntValidator, QDoubleValidator, QRegExpValidator, QRegularExpressionValidator
-from PyQt5.QtCore import Qt, QRegExp, QRegularExpression
+from PyQt5.QtCore import Qt, QRegExp, QRegularExpression, QDateTime
 
 from bson import ObjectId
 import yaml
@@ -89,11 +89,11 @@ class Member:
             if isinstance(_obj[k], list):
                 obs = []
                 for o in getattr(self, k):
-                    obs.append(o._asdict())
+                    obs.append(asdict(o))
                 di[k] = obs
             elif isinstance(_obj[k], str):
                 o = getattr(self, k)
-                di[k] = o._asdict()
+                di[k] = asdict(o)
             else:  # type is Field
                 fobj = _obj[k]
                 if not fobj.is_readonly():
@@ -150,31 +150,31 @@ class InputBase(ABC):
 
     def transform(self, val, dsttype):
         if isinstance(val, str):
-            if dsttype == 'str':
+            if dsttype == str:
                 return val
-            elif dsttype == 'int':
+            elif dsttype == int:
                 return int(val)
-            elif dsttype == 'float':
+            elif dsttype == float:
                 return float(val)
         elif isinstance(val, int):
-            if dsttype == 'str':
+            if dsttype == str:
                 return str(val)
-            elif dsttype == 'int':
+            elif dsttype == int:
                 return val
-            elif dsttype == 'float':
+            elif dsttype == float:
                 return float(val)
         elif isinstance(val, float):
-            if dsttype == 'str':
+            if dsttype == str:
                 return str(val)
-            elif dsttype == 'int':
+            elif dsttype == int:
                 return int(val)
-            elif dsttype == 'float':
+            elif dsttype == float:
                 return val
         elif isinstance(val, bool):
-            if dsttype == 'bool':
+            if dsttype == bool:
                 return val
         elif isinstance(val, datetime):
-            if dsttype == 'datetime':
+            if dsttype == datetime:
                 return val
         raise TypeError(f'Unsupported type transform: {type(val)}->{dsttype}')
 
@@ -322,9 +322,9 @@ class ComboBoxItems(object):
 
 
 class ComboBoxLambda(object):
-    def __init__(self, ymlfile, function, modoules):
-        self.srcdi = _xmlfiles[ymlfile]
-        self.func = _build_func(function, modoules)
+    def __init__(self, function, ymlfile=None, modules=None):
+        self.srcdi = _xmlfiles[ymlfile] if ymlfile else {}
+        self.func = _build_func(function, modules)
 
     def init_editor(self, editor, obj, val):
         items = self.func(obj, self.srcdi)
@@ -441,11 +441,11 @@ class InputTimeEdit(InputBase):
 
     def set_editor_data(self, editor, data):
         val = self.transform(data, datetime)
-        editor.setDateTime(val)
+        editor.setDateTime(QDateTime(val))
         return
 
     def get_editor_data(self, editor, ftype):
-        val = editor.dateTime()
+        val = editor.dateTime().toPyDateTime()
         return self.transform(val, ftype)
 
 
@@ -464,11 +464,11 @@ class InputDateEdit(InputBase):
 
     def set_editor_data(self, editor, data):
         val = self.transform(data, datetime)
-        editor.setDateTime(val)
+        editor.setDateTime(QDateTime(val))
         return
 
     def get_editor_data(self, editor, ftype):
-        val = editor.dateTime()
+        val = editor.dateTime().toPyDateTime()
         return self.transform(val, ftype)
 
 
@@ -487,11 +487,11 @@ class InputDateTimeEdit(InputBase):
 
     def set_editor_data(self, editor, data):
         val = self.transform(data, datetime)
-        editor.setDateTime(val)
+        editor.setDateTime(QDateTime(val))
         return
 
     def get_editor_data(self, editor, ftype):
-        val = editor.dateTime()
+        val = editor.dateTime().toPyDateTime()
         return self.transform(val, ftype)
 
 
@@ -506,12 +506,12 @@ class OutputFmt(OutputBase):
         self.format = format
 
     def to_str(self, obj, val) -> str:
-        return self.format.format(val)
+        return self.format.format(val) if val is not None else None
 
 
 class OutputFunc(OutputBase):
-    def __init__(self, function, modoules=None):
-        self.func = _build_func(function, modoules)
+    def __init__(self, function, modules=None):
+        self.func = _build_func(function, modules)
 
     def to_str(self, obj, val) -> str:
         return self.func(obj, val)
@@ -526,7 +526,7 @@ def _build_func(sfunc, modules):
 
 
 class Field(object):
-    ftype: str
+    ftype: type
     fdefault: Any
     title: str
     width: int
@@ -539,7 +539,16 @@ class Field(object):
 
     def __init__(self, name, type, output, default=None, title=None, width=None, horizontal=None, vertical=None,
                  blod=None, input=None):
-        self.ftype = type
+        if type == 'bool':
+            self.ftype = bool
+        elif type == 'str':
+            self.ftype = str
+        elif type == 'int':
+            self.ftype = int
+        elif type == 'float':
+            self.ftype = float
+        elif type == 'datetime':
+            self.ftype = datetime
         self.fdefault = default
         self.title = title if title else name
         self.width = width if width else 80
@@ -630,11 +639,11 @@ def _init_input(iput):
         if 'items' in iput:
             items = iput['items']
             if isinstance(items, dict):
-                _check_key(items, cls, {'class': str, 'ymlfile': str, 'function': str, 'modoules': list})
-                if 'modoules' in items:
-                    for mod in items['modoules']:
+                _check_key(items, cls, {'class': str, 'ymlfile': str, 'function': str, 'modules': list})
+                if 'modules' in items:
+                    for mod in items['modules']:
                         if not isinstance(mod, str):
-                            raise RuntimeError('input: QComboBox modoules must is string list')
+                            raise RuntimeError('input: QComboBox modules must is string list')
                 if 'ymlfile' in items:
                     kfname = items['ymlfile']
                     if kfname not in _xmlfiles:
@@ -698,25 +707,24 @@ def _init_output(oput):
         _check_key(oput, cls, {'format': str})
         return OutputFmt(**oput)
     elif cls == 'lambda':
-        _check_key(oput, cls, {'function': str, 'modoules': list})
-        if 'modoules' in oput:
-            for mod in oput['modoules']:
+        _check_key(oput, cls, {'function': str, 'modules': list})
+        if 'modules' in oput:
+            for mod in oput['modules']:
                 if not isinstance(mod, str):
-                    raise RuntimeError('output: modoules must is string list')
+                    raise RuntimeError('output: modules must is string list')
         return OutputFunc(**oput)
     else:
         raise RuntimeError(f'output: unknown class [{cls}]')
 
 
 def _init_clsdef(cls: str, di: Dict[str, Field]):
-    field_names = []
-    defaults = []
+    fields = []
     for k in di:
-        if di[k].is_readonly():  # read only field , don't save to db
+        fobj = di[k]
+        if fobj.is_readonly():  # read only field , don't save to db
             continue
-        field_names.append(k)
-        defaults.append(di[k].fdefault)
-    return namedtuple(cls, field_names, defaults=defaults)
+        fields.append((k, fobj.ftype, fobj.fdefault))
+    return make_dataclass(cls, fields)
 
 
 def initialize() -> NoReturn:
@@ -797,10 +805,6 @@ def get_group_list_fields() -> Dict[Tuple[str, str], List[Tuple[str, Field]]]:
 
 
 def get_write_top_fields() -> List[Tuple[str, Field]]:
-    """
-
-    :return:
-    """
     fields = []
     for k in _obj:
         if isinstance(_obj[k], Field):
@@ -811,10 +815,6 @@ def get_write_top_fields() -> List[Tuple[str, Field]]:
 
 
 def get_write_group_top_fields() -> Dict[Tuple[str, str], List[Tuple[str, Field]]]:
-    """
-
-    :return:
-    """
     groupdi = {}
     for k in _obj:
         if isinstance(_obj[k], str):
@@ -830,10 +830,6 @@ def get_write_group_top_fields() -> Dict[Tuple[str, str], List[Tuple[str, Field]
 
 
 def get_write_group_list_fields() -> Dict[Tuple[str, str], List[Tuple[str, Field]]]:
-    """
-
-    :return:
-    """
     groupdi = {}
     for k in _obj:
         if isinstance(_obj[k], list):
@@ -846,3 +842,7 @@ def get_write_group_list_fields() -> Dict[Tuple[str, str], List[Tuple[str, Field
                     fields.append((field, fobj))
             groupdi[(k, cls)] = fields
     return groupdi
+
+
+def get_class_object(cls):
+    return _classdefs[cls]

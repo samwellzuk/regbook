@@ -48,9 +48,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     @except_check
     def on_changePwd_clicked(self):
-        """
-        Slot documentation goes here.
-        """
         db = DBManager()
         dlg = ChangePwdDlg(db.cur_user.user, parent=self)
         if dlg.exec() != ChangePwdDlg.Accepted:
@@ -61,17 +58,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     @except_check
     def on_memberManage_clicked(self):
-        """
-        Slot documentation goes here.
-        """
         self.workspace.setCurrentWidget(self._membermgrview)
         self._membermgrview.activeView()
 
     @pyqtSlot()
     @except_check
     def on_userManage_clicked(self):
-        """
-        Slot documentation goes here.
-        """
         self.workspace.setCurrentWidget(self._usermgrview)
         self._usermgrview.activeView()

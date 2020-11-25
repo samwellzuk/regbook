@@ -7,6 +7,7 @@ from comm.utility import except_check
 from comm.fileicon import query_file_icon
 from settings import best_thumbnail_width
 
+
 # _role_dict = {
 #     0: 'DisplayRole',
 #     1: 'DecorationRole',
@@ -68,12 +69,12 @@ class VirFileModel(QAbstractListModel):
 
     @except_check
     def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role != Qt.DisplayRole:
-            return None
-        if orientation == Qt.Horizontal:
-            return int(section + 1)
-        else:
-            return int(section + 1)
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return int(section + 1)
+            else:
+                return int(section + 1)
+        return super(VirFileModel, self).headerData(section, orientation, role)
 
     @except_check
     def rowCount(self, parent=QModelIndex(), *args, **kwargs):
@@ -81,36 +82,34 @@ class VirFileModel(QAbstractListModel):
 
     @except_check
     def flags(self, index):
-        if not index.isValid():
-            return super().flags(index)
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        if index.isValid():
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return super(VirFileModel, self).flags(index)
 
     @except_check
     def data(self, index, role=Qt.DisplayRole):
-        if not index.isValid():
-            return QVariant()
-        row = index.row()
-        m = self._models[row]
-        if role == Qt.SizeHintRole:
-            # 10 margin, 60 for 3 line text
-            return QSize(best_thumbnail_width + 10, best_thumbnail_width + 10 + 60)
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignCenter
-        elif role == Qt.DisplayRole:
-            return m.filename
-        elif role == Qt.DecorationRole:
-            return self._pixmaps[row]
-        elif role == Qt.ToolTipRole:
-            tooltip = [
-                f'name: {m.filename}',
-                f'length: {m.length / 1024 / 1024:.2f}M',
-                f'upload date: {m.uploadDate.strftime("%Y-%m-%d %H:%M:%S")}',
-                f'upload user: {m.upload_user}',
-                f'md5 code: {m.md5}'
-            ]
-            return '\n'.join(tooltip)
-        else:
-            return QVariant()
+        if index.isValid():
+            row = index.row()
+            m = self._models[row]
+            if role == Qt.SizeHintRole:
+                # 10 margin, 60 for 3 line text
+                return QSize(best_thumbnail_width + 10, best_thumbnail_width + 10 + 60)
+            elif role == Qt.TextAlignmentRole:
+                return Qt.AlignCenter
+            elif role == Qt.DisplayRole:
+                return m.filename
+            elif role == Qt.DecorationRole:
+                return self._pixmaps[row]
+            elif role == Qt.ToolTipRole:
+                tooltip = [
+                    f'name: {m.filename}',
+                    f'length: {m.length / 1024 / 1024:.2f}M',
+                    f'upload date: {m.uploadDate.strftime("%Y-%m-%d %H:%M:%S")}',
+                    f'upload user: {m.upload_user}',
+                    f'md5 code: {m.md5}'
+                ]
+                return '\n'.join(tooltip)
+        return QVariant()
 
     def add_model(self, m, pos=0):
         img = self._get_best_pixmap(self._get_pixmap(m))

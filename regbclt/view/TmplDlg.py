@@ -8,6 +8,7 @@ from enum import Enum
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 
+from comm.utility import except_check
 from .ui_TmplDlg import Ui_TmplDlg
 
 
@@ -39,6 +40,7 @@ class TmplDlg(QDialog, Ui_TmplDlg):
         if not showopen:
             self.openButton.setVisible(False)
 
+    @except_check
     def accept(self) -> None:
         super(TmplDlg, self).accept()
         self.tmpl = self.tmplBox.currentText()
