@@ -139,6 +139,7 @@ inputs:
       inputMask: "000.000.000.000;_"
   example6:
     class: QCheckBox
+    title: is happy now?
   example7:
     class: QComboBox
     editable: True

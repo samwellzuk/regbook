@@ -74,7 +74,7 @@ class MemberService(QObject):
             raise RuntimeError("Can't find member, please refresh!")
         self.progressUpdated.emit(100)
 
-    def update_member(self, oldm: Member, newm: Member) -> Member:
+    def update_member(self, oldm: Member, newm: Member) -> Optional[Member]:
         self.progressTxtChanged.emit('Inserting member...')
         self.progressUpdated.emit(0)
         olddi = oldm.to_db_dict()
@@ -96,8 +96,10 @@ class MemberService(QObject):
             if result.modified_count != 1:
                 raise RuntimeError("Can't find member, please refresh!")
             newm._ts = changedi['_ts']
+            self.progressUpdated.emit(100)
+            return newm
         self.progressUpdated.emit(100)
-        return newm
+        return None
 
     def get_member_avatar(self, member: Member) -> Member:
         self.progressTxtChanged.emit('Querying avatar...')

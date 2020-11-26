@@ -156,6 +156,9 @@ class InputBase(ABC):
                 return int(val)
             elif dsttype == float:
                 return float(val)
+        elif isinstance(val, bool):  # bool > int > object
+            if dsttype == bool:
+                return val
         elif isinstance(val, int):
             if dsttype == str:
                 return str(val)
@@ -170,9 +173,6 @@ class InputBase(ABC):
                 return int(val)
             elif dsttype == float:
                 return val
-        elif isinstance(val, bool):
-            if dsttype == bool:
-                return val
         elif isinstance(val, datetime):
             if dsttype == datetime:
                 return val
@@ -180,8 +180,16 @@ class InputBase(ABC):
 
 
 class InputCheckBox(InputBase):
+    def __init__(self, title=None):
+        self.title = title
+
     def create_editor(self, parent, obj, val):
-        return QCheckBox(parent=parent)
+        if self.title:
+            editor = QCheckBox(self.title, parent=parent)
+        else:
+            editor = QCheckBox(parent=parent)
+        editor.setStyleSheet("QCheckBox{background-color:white;}")
+        return editor
 
     def set_editor_data(self, editor, data):
         val = self.transform(data, bool)
@@ -632,8 +640,8 @@ def _init_input(iput):
     cls = iput['class']
     iput.pop('class')
     if cls == 'QCheckBox':
-        _check_key(iput, cls, {})
-        return InputCheckBox()
+        _check_key(iput, cls, {'title': str})
+        return InputCheckBox(**iput)
     elif cls == 'QComboBox':
         _check_key(iput, cls, {'editable': bool, 'items': None, })
         if 'items' in iput:

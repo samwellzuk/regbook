@@ -196,7 +196,8 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         dlg = MemberDlg(deepcopy(oldmem), parent=self)
         if dlg.exec() == MemberDlg.Accepted:
             member = self.svc.update_member(oldmem, dlg.member)
-            self._membersmodel.update_model(clickindex.row(), member)
+            if member:
+                self._membersmodel.update_model(clickindex.row(), member)
 
     @pyqtSlot()
     @except_check
@@ -207,7 +208,8 @@ class MemberManageView(QWidget, Ui_MemberManageView):
         dlg = MemberDlg(deepcopy(oldmem), parent=self)
         if dlg.exec() == MemberDlg.Accepted:
             member = self.svc.update_member(oldmem, dlg.member)
-            self._membersmodel.update_model(index.row(), member)
+            if member:
+                self._membersmodel.update_model(index.row(), member)
 
     @pyqtSlot()
     @except_check
