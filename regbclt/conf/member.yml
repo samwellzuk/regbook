@@ -15,19 +15,16 @@ inputs:
   inheight:
     class: QLineEdit
     validator:
-      class: QDoubleValidator
-      bottom: 0.00
-      top: 99.00
-      decimals: 2
-      notation: 0 # 0 or 1
+      class: inputMask
+      inputMask: "9'b0\";_"
   inweight:
-    class: QLineEdit
-    validator:
-      class: QDoubleValidator
-      bottom: 0.00
-      top: 999.00
-      decimals: 2
-      notation: 0 # 0 or 1
+    class: QSpinBox
+    minimum: 1
+    maximum: 1000
+    step: 1
+    intbase: 10
+    suffix:
+    prefix:
   innation:
     class: QComboBox
     editable: True
@@ -172,25 +169,25 @@ classes:
       input: # don't have input, mean calculated field , don't save to db
       output: outage
     height:
-      type: float
+      type: str
       default:
-      title: height(meter)
+      title: height(inch)
       width: 100
       horizontal: left # left center right
       vertical: center # top center bottom
       blod: False
       input: inheight
-      output: outfloat
+      output: outstr
     weight:
-      type: float
+      type: int
       default:
-      title: weight(kg)
+      title: weight(lbs)
       width: 100
       horizontal: left # left center right
       vertical: center # top center bottom
       blod: False
       input: inweight
-      output: outfloat
+      output: outstr
   Relation:
     nation:
       type: str

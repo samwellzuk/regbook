@@ -112,6 +112,8 @@ class Member:
                 fobj = cls[kf]
                 val = None if fobj.is_readonly() else getattr(obj, kf)
                 odi[kf] = fobj.outputobj.to_str(obj, val)
+                if odi[kf] is None:
+                    odi[kf] = ''
             return odi
 
         di = {}
@@ -132,6 +134,8 @@ class Member:
                 obj = self
                 val = None if fobj.is_readonly() else getattr(self, k)
                 di[k] = fobj.outputobj.to_str(obj, val)
+                if di[k] is None:
+                    di[k] = ''
         return di
 
 

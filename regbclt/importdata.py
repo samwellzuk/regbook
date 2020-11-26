@@ -127,7 +127,7 @@ def process(datalist):
                 'district': chkstr(distr(di['distr'])),
                 'street': chkstr(di['addr']),
                 'wlandline': chkstr(di['b_tel']),
-                'wregion': chkstr(di['region']),
+                'wregion': chkstr(di['region']) if chkstr(di['b_addr']) else None,
                 'wdistrict': chkstr(distr(di['b_distr'])),
                 'wstreet': chkstr(di['b_addr'])
             },
@@ -169,7 +169,7 @@ def process(datalist):
                 'district': chkstr(distr(di['distr'])),
                 'street': chkstr(di['addr']),
                 'wlandline': chkstr(di['s_tel']),
-                'wregion': chkstr(di['region']),
+                'wregion': chkstr(di['region']) if chkstr(di['s_addr']) else None,
                 'wdistrict': chkstr(distr(di['s_distr'])),
                 'wstreet': chkstr(di['s_addr'])
             },
