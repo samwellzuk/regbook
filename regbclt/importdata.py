@@ -120,7 +120,7 @@ def process(datalist):
                 'father': None,
                 'mother': None
             },
-            'adr': {
+            'cnt': {
                 'cellphone': chkstr(di['bcell']),
                 'landline': chkstr(di['tel']),
                 'region': chkstr(di['region']),
@@ -162,7 +162,7 @@ def process(datalist):
                 'father': None,
                 'mother': None
             },
-            'adr': {
+            'cnt': {
                 'cellphone': chkstr(di['scell']),
                 'landline': chkstr(di['tel']),
                 'region': chkstr(di['region']),
@@ -196,9 +196,10 @@ def main(fname):
     members = process(datalist)
     dbmgr = DBManager()
     while True:
+        host = input('Please input host:')
         user = input('Please input user name: ')
         pwd = input('Please input password: ')
-        if dbmgr.auth(user, pwd, 'localhost'):
+        if dbmgr.auth(user, pwd, host):
             break
         print('Login error, please retry')
     coll = dbmgr.get_db().get_collection('members')

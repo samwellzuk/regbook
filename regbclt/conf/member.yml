@@ -279,7 +279,7 @@ classes:
       blod: False
       input: instr
       output: outstr
-  Address:
+  Contact:
     cellphone:
       type: str
       default:
@@ -456,7 +456,7 @@ classes:
 obj:
   base: Person
   rel: Relation
-  adr: Address
+  cnt: Contact
   chu: Church
   meet: 
     - Meet
